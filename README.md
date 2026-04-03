@@ -5,6 +5,10 @@ A portable single-file DuckDB-WASM data lab with tables, charts, transforms, and
 
 A single-file web application that provides a browser-based interface for DuckDB, enabling SQL queries on uploaded data files without server-side processing.
 
+Please feel free to test the demo here:
+
+https://shonejj.github.io/Xelquanta-lab
+
 ## Features
 
 - **File Upload Support**: Load CSV, Parquet, JSON, files directly in the browser
