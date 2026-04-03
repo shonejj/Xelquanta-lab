@@ -6,254 +6,1479 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Xelquanta Lab — Advanced Analytics & AI</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
+
   <style>
     :root {
-      --primary: #0e48e9; --primary-light: #E0F2FE; --primary-dark: #02b0c7;
-      --surface: #ffffff; --bg: #F3F4F6;
-      --border: #E5E7EB; --border-light: #F9FAFB;
-      --text: #111827; --text2: #4B5563; --text3: #9CA3AF;
-      --green: #10B981; --red: #EF4444; --yellow: #F59E0B;
-      --hover: #F9FAFB; --selected: #E0F2FE; --header-bg: #F9FAFB;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow2: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      --r: 8px; --r2: 12px;
-      --font: 'Inter', sans-serif; --mono: 'Roboto Mono', monospace;
+      --primary: #0e48e9;
+      --primary-light: #E0F2FE;
+      --primary-dark: #02b0c7;
+      --surface: #ffffff;
+      --bg: #F3F4F6;
+      --border: #E5E7EB;
+      --border-light: #F9FAFB;
+      --text: #111827;
+      --text2: #4B5563;
+      --text3: #9CA3AF;
+      --green: #10B981;
+      --red: #EF4444;
+      --yellow: #F59E0B;
+      --hover: #F9FAFB;
+      --selected: #E0F2FE;
+      --header-bg: #F9FAFB;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+      --shadow2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --r: 8px;
+      --r2: 12px;
+      --font: 'Inter', sans-serif;
+      --mono: 'Roboto Mono', monospace;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font); background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; font-size: 13px; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+    }
 
     /* APP BAR */
-    .app-bar { height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-shrink: 0; z-index: 200; }
-    .app-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--text); }
-    .logo-sq { width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .logo-sq .material-icons { color: #fff; font-size: 16px; }
-    .spacer { flex: 1; }
-    
-    .view-tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
-    .view-tab { padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all .15s; white-space: nowrap; }
-    .view-tab.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow); }
+    .app-bar {
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 200;
+    }
 
-    .status-chip { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; background: var(--bg); border: 1px solid var(--border); font-size: 12px; color: var(--text2); font-weight: 500; white-space: nowrap; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); transition: background .3s; }
-    .dot.ready { background: var(--green); }
-    .dot.loading { background: var(--yellow); animation: blink 1s infinite; }
-    .dot.error { background: var(--red); }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+    .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
 
-    .mobile-btn { display: none; background: none; border: none; color: var(--text2); cursor: pointer; padding: 4px; }
-    
+    .logo-sq {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-sq .material-icons {
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .view-tabs {
+      display: flex;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .view-tab {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .view-tab.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .status-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text3);
+      transition: background .3s;
+    }
+
+    .dot.ready {
+      background: var(--green);
+    }
+
+    .dot.loading {
+      background: var(--yellow);
+      animation: blink 1s infinite;
+    }
+
+    .dot.error {
+      background: var(--red);
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .3;
+      }
+    }
+
+    .mobile-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 4px;
+    }
+
     /* MENU BAR */
-    .menu-bar { height: 36px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 8px; flex-shrink: 0;}
-    .menu-bar::-webkit-scrollbar { display: none; }
-    .dd { position: relative; display: inline-block; }
-    .mi { padding: 4px 12px; border-radius: var(--r); font-size: 13px; color: var(--text2); cursor: pointer; font-weight: 500; white-space: nowrap; }
-    .mi:hover { background: var(--hover); color: var(--text); }
-    .dd-menu { position: absolute; top: 100%; left: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow2); min-width: 200px; padding: 4px 0; z-index: 1000; display: none; }
-    .dd-menu.open { display: block; }
-    .dd-item { display: flex; align-items: center; gap: 12px; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; }
-    .dd-item:hover { background: var(--hover); }
-    .dd-item .material-icons { font-size: 16px; color: var(--text2); }
-    .dd-sep { height: 1px; background: var(--border-light); margin: 4px 0; }
+    .menu-bar {
+      height: 36px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+
+    .menu-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dd {
+      position: relative;
+      display: inline-block;
+    }
+
+    .mi {
+      padding: 4px 12px;
+      border-radius: var(--r);
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .mi:hover {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .dd-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow2);
+      min-width: 200px;
+      padding: 4px 0;
+      z-index: 1000;
+      display: none;
+    }
+
+    .dd-menu.open {
+      display: block;
+    }
+
+    .dd-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .dd-item:hover {
+      background: var(--hover);
+    }
+
+    .dd-item .material-icons {
+      font-size: 16px;
+      color: var(--text2);
+    }
+
+    .dd-sep {
+      height: 1px;
+      background: var(--border-light);
+      margin: 4px 0;
+    }
 
     /* TOOLBAR */
-    .toolbar { height: 44px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 12px; gap: 4px; flex-shrink: 0; overflow-x: auto; }
-    .toolbar::-webkit-scrollbar { display: none; }
-    .tbb { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: var(--r); border: none; background: transparent; color: var(--text2); cursor: pointer; transition: all .1s; flex-shrink: 0; }
-    .tbb:hover:not(:disabled) { background: var(--hover); color: var(--text); }
-    .tbb:disabled { opacity: 0.3; cursor: not-allowed; }
-    .tbb .material-icons { font-size: 18px; }
-    .tbt { display: flex; align-items: center; gap: 6px; padding: 0 10px; height: 32px; border-radius: var(--r); border: 1px solid transparent; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-    .tbt:hover { background: var(--hover); color: var(--text); border-color: var(--border); }
-    .tbt .material-icons { font-size: 16px; }
-    .tb-sep { width: 1px; height: 24px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
+    .toolbar {
+      height: 44px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 4px;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .toolbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tbb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r);
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .1s;
+      flex-shrink: 0;
+    }
+
+    .tbb:hover:not(:disabled) {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .tbb:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .tbb .material-icons {
+      font-size: 18px;
+    }
+
+    .tbt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      height: 32px;
+      border-radius: var(--r);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tbt:hover {
+      background: var(--hover);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .tbt .material-icons {
+      font-size: 16px;
+    }
+
+    .tb-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 6px;
+      flex-shrink: 0;
+    }
 
     /* BODY & LAYOUT */
-    .body { flex: 1; display: flex; overflow: hidden; position: relative; }
+    .body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
 
     /* SIDEBAR */
-    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; transition: width 0.3s ease, transform 0.3s ease; z-index: 100; overflow: hidden; }
-    .sidebar.collapsed { width: 0; border-right: none; }
-    .sh { height: 44px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border-light); font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; justify-content: space-between; white-space: nowrap; }
-    .sc-scroll { flex: 1; overflow-y: auto; width: 240px; }
-    .upload-zone { margin: 12px; border: 1px dashed var(--border); border-radius: var(--r); padding: 16px 12px; text-align: center; cursor: pointer; background: var(--bg); transition: all .15s; }
-    .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
-    .upload-zone .material-icons { font-size: 24px; color: var(--text3); margin-bottom: 4px; }
-    .uz-text { font-size: 12px; color: var(--text2); font-weight: 500; }
-    #file-input { display: none; }
-    .ti { display: flex; align-items: center; gap: 10px; padding: 8px 16px; cursor: pointer; transition: background .1s; border-left: 3px solid transparent; }
-    .ti:hover { background: var(--hover); }
-    .ti.active { background: var(--primary-light); border-left-color: var(--primary); }
-    .ti .material-icons { font-size: 18px; color: var(--text3); }
-    .ti-info { flex: 1; min-width: 0; }
-    .ti-name { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ti-meta { font-size: 11px; color: var(--text3); }
+    .sidebar {
+      width: 240px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.3s ease, transform 0.3s ease;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: 0;
+      border-right: none;
+    }
+
+    .sh {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      justify-content: space-between;
+      white-space: nowrap;
+    }
+
+    .sc-scroll {
+      flex: 1;
+      overflow-y: auto;
+      width: 240px;
+    }
+
+    .upload-zone {
+      margin: 12px;
+      border: 1px dashed var(--border);
+      border-radius: var(--r);
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: all .15s;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .upload-zone .material-icons {
+      font-size: 24px;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+
+    .uz-text {
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 500;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .ti {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background .1s;
+      border-left: 3px solid transparent;
+    }
+
+    .ti:hover {
+      background: var(--hover);
+    }
+
+    .ti.active {
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
+
+    .ti .material-icons {
+      font-size: 18px;
+      color: var(--text3);
+    }
+
+    .ti-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ti-name {
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ti-meta {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .ti-acts {
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+
+    .ti:hover .ti-acts {
+      opacity: 1;
+    }
+
+    .ti-act-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text3);
+      transition: all .1s;
+    }
+
+    .ti-act-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .ti-act-btn .material-icons {
+      font-size: 15px;
+    }
+
+    .ti-act-del:hover {
+      background: #FEE2E2;
+      color: var(--red);
+    }
 
     /* MAIN AREA */
-    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--bg); min-width: 0; }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg);
+      min-width: 0;
+    }
 
     /* SQL PANEL */
-    .sql-panel { background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; display: none; flex-direction: column; }
-    .sql-panel.open { display: flex; }
-    .sql-body { padding: 12px; display: flex; gap: 8px; align-items: flex-start; }
-    .sql-editor-wrap { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-    textarea#sql-editor { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); color: var(--text); font-family: var(--mono); font-size: 13px; padding: 12px; resize: vertical; min-height: 80px; outline: none; }
-    textarea#sql-editor:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1); }
-    .sql-error { display: none; background: #FEF2F2; border: 1px solid #F87171; border-radius: var(--r); padding: 8px 12px; color: #991B1B; font-size: 12px; font-family: var(--mono); align-items: center; gap: 12px; justify-content: space-between; }
-    .sql-error.show { display: flex; }
-    .sql-acts { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .sql-panel {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      display: none;
+      flex-direction: column;
+    }
+
+    .sql-panel.open {
+      display: flex;
+    }
+
+    .sql-body {
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .sql-editor-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    textarea#sql-editor {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 12px;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+    }
+
+    textarea#sql-editor:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+    }
+
+    .sql-error {
+      display: none;
+      background: #FEF2F2;
+      border: 1px solid #F87171;
+      border-radius: var(--r);
+      padding: 8px 12px;
+      color: #991B1B;
+      font-size: 12px;
+      font-family: var(--mono);
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
+    }
+
+    .sql-error.show {
+      display: flex;
+    }
+
+    .sql-acts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
     /* BUTTONS */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; height: 36px; border-radius: var(--r); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; font-family: var(--font); white-space: nowrap; }
-    .btn .material-icons { font-size: 16px; }
-    .btn-c { background: var(--primary); color: #fff; box-shadow: var(--shadow); }
-    .btn-c:hover { background: var(--primary-dark); box-shadow: var(--shadow2); }
-    .btn-o { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
-    .btn-o:hover { background: var(--hover); border-color: var(--text3); }
-    .btn-t { background: transparent; color: var(--text2); }
-    .btn-t:hover { background: var(--hover); color: var(--text); }
-    .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 16px;
+      height: 36px;
+      border-radius: var(--r);
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
+
+    .btn .material-icons {
+      font-size: 16px;
+    }
+
+    .btn-c {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-c:hover {
+      background: var(--primary-dark);
+      box-shadow: var(--shadow2);
+    }
+
+    .btn-o {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-o:hover {
+      background: var(--hover);
+      border-color: var(--text3);
+    }
+
+    .btn-t {
+      background: transparent;
+      color: var(--text2);
+    }
+
+    .btn-t:hover {
+      background: var(--hover);
+      color: var(--text);
+    }
+
+    .btn-sm {
+      height: 28px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
 
     /* GRID VIEW */
-    .grid-wrap { flex: 1; overflow: hidden; background: var(--surface); position: relative; display: none; flex-direction: row; }
-    .grid-wrap.active { display: flex; }
-    .grid-pane { flex: 1; overflow: auto; position: relative; min-width: 0; border-right: 1px solid var(--border); }
-    .grid-pane::-webkit-scrollbar { width: 10px; height: 10px; }
-    .grid-pane::-webkit-scrollbar-track { background: var(--bg); }
-    .grid-pane::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 5px; }
-    
-    table.sheet { border-collapse: collapse; min-width: 100%; font-size: 13px; }
-    table.sheet thead { position: sticky; top: 0; z-index: 10; background: var(--header-bg); box-shadow: 0 1px 0 var(--border); }
-    table.sheet th { padding: 0; border-right: 1px solid var(--border); background: var(--header-bg); position: relative; user-select: none; }
-    
-    .thc { display: flex; align-items: center; gap: 4px; padding: 8px 12px; cursor: grab; min-width: 80px; }
-    .thc:active { cursor: grabbing; }
-    .thc.drag-over { background: var(--primary-light); border-left: 2px solid var(--primary); }
-    .th-n { font-weight: 600; color: var(--text2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .th-t { font-size: 10px; color: var(--text3); font-family: var(--mono); }
-    .th-menu-btn { opacity: 0; cursor: pointer; padding: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.1s; }
-    .th-menu-btn:hover { background: var(--border); color: var(--text); }
-    th:hover .th-menu-btn { opacity: 1; }
-    .th-resizer { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; cursor: col-resize; z-index: 1; }
-    .th-resizer:hover, .th-resizer.resizing { background: var(--primary); opacity: 0.5; }
+    .grid-wrap {
+      flex: 1;
+      overflow: hidden;
+      background: var(--surface);
+      position: relative;
+      display: none;
+      flex-direction: row;
+    }
 
-    table.sheet td { padding: 6px 12px; border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; position: relative; }
-    table.sheet td.num { color: #0369A1; text-align: right; font-family: var(--mono); }
-    table.sheet td.rn { color: var(--text3); text-align: center; font-size: 11px; background: var(--header-bg); border-right: 1px solid var(--border); width: 48px; position: sticky; left: 0; z-index: 5; }
-    table.sheet tr:hover td { background: var(--hover); }
-    
-    table.sheet td.editable { cursor: cell; }
-    table.sheet td.editable:hover::after { content: ''; position: absolute; inset: 0; border: 1px dashed var(--primary); pointer-events: none; }
-    table.sheet td.editing { padding: 0; }
-    table.sheet td.editing input { width: 100%; height: 100%; padding: 6px 12px; border: none; outline: 2px solid var(--primary); outline-offset: -2px; font-family: inherit; font-size: inherit; background: #fff; box-shadow: var(--shadow2); }
+    .grid-wrap.active {
+      display: flex;
+    }
+
+    .grid-pane {
+      flex: 1;
+      overflow: auto;
+      position: relative;
+      min-width: 0;
+      border-right: 1px solid var(--border);
+    }
+
+    .grid-pane::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .grid-pane::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    .grid-pane::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 5px;
+    }
+
+    table.sheet {
+      border-collapse: collapse;
+      min-width: 100%;
+      font-size: 13px;
+    }
+
+    table.sheet thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--header-bg);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    table.sheet th {
+      padding: 0;
+      border-right: 1px solid var(--border);
+      background: var(--header-bg);
+      position: relative;
+      user-select: none;
+    }
+
+    .thc {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      cursor: grab;
+      min-width: 80px;
+    }
+
+    .thc:active {
+      cursor: grabbing;
+    }
+
+    .thc.drag-over {
+      background: var(--primary-light);
+      border-left: 2px solid var(--primary);
+    }
+
+    .th-n {
+      font-weight: 600;
+      color: var(--text2);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .th-t {
+      font-size: 10px;
+      color: var(--text3);
+      font-family: var(--mono);
+    }
+
+    .th-menu-btn {
+      opacity: 0;
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      transition: all 0.1s;
+    }
+
+    .th-menu-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    th:hover .th-menu-btn {
+      opacity: 1;
+    }
+
+    .th-resizer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      cursor: col-resize;
+      z-index: 1;
+    }
+
+    .th-resizer:hover,
+    .th-resizer.resizing {
+      background: var(--primary);
+      opacity: 0.5;
+    }
+
+    table.sheet td {
+      padding: 6px 12px;
+      border-right: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
+      position: relative;
+    }
+
+    table.sheet td.num {
+      color: #0369A1;
+      text-align: right;
+      font-family: var(--mono);
+    }
+
+    table.sheet td.rn {
+      color: var(--text3);
+      text-align: center;
+      font-size: 11px;
+      background: var(--header-bg);
+      border-right: 1px solid var(--border);
+      width: 48px;
+      position: sticky;
+      left: 0;
+      z-index: 5;
+    }
+
+    table.sheet tr:hover td {
+      background: var(--hover);
+    }
+
+    table.sheet td.editable {
+      cursor: cell;
+    }
+
+    table.sheet td.editable:hover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px dashed var(--primary);
+      pointer-events: none;
+    }
+
+    table.sheet td.editing {
+      padding: 0;
+    }
+
+    table.sheet td.editing input {
+      width: 100%;
+      height: 100%;
+      padding: 6px 12px;
+      border: none;
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+      font-family: inherit;
+      font-size: inherit;
+      background: #fff;
+      box-shadow: var(--shadow2);
+    }
 
     /* DASHBOARD VIEW */
-    .dashboard-wrap { flex: 1; overflow-y: auto; padding: 24px; display: none; background: var(--bg); }
-    .dashboard-wrap.active { display: block; }
-    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .dash-title { font-size: 20px; font-weight: 600; color: var(--text); }
-    .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-    
-    .widget { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
-    .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .widget-title { font-size: 14px; font-weight: 600; color: var(--text2); }
-    .widget-body { flex: 1; min-height: 200px; position: relative; overflow: auto; }
-    
-    .leaderboard { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .leaderboard th { text-align: left; padding: 4px 8px; color: var(--text3); font-weight: 500; border-bottom: 1px solid var(--border-light); }
-    .leaderboard td { padding: 6px 8px; border-bottom: 1px solid var(--border-light); }
-    .leaderboard .bar-cell { position: relative; width: 100px; }
-    .leaderboard .bar { position: absolute; left: 0; top: 4px; bottom: 4px; background: var(--primary-light); border-radius: 2px; z-index: 0; }
-    .leaderboard .bar-val { position: relative; z-index: 1; font-family: var(--mono); text-align: right; display: block; }
+    .dashboard-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: none;
+      background: var(--bg);
+    }
+
+    .dashboard-wrap.active {
+      display: block;
+    }
+
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dash-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .widget {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .widget-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    .widget-body {
+      flex: 1;
+      min-height: 200px;
+      position: relative;
+      overflow: auto;
+    }
+
+    .leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .leaderboard th {
+      text-align: left;
+      padding: 4px 8px;
+      color: var(--text3);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .leaderboard td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .leaderboard .bar-cell {
+      position: relative;
+      width: 100px;
+    }
+
+    .leaderboard .bar {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      background: var(--primary-light);
+      border-radius: 2px;
+      z-index: 0;
+    }
+
+    .leaderboard .bar-val {
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      text-align: right;
+      display: block;
+    }
 
     /* DIAGNOSTICS VIEW */
-    .diag-wrap { flex: 1; display: none; background: var(--bg); overflow: hidden; }
-    .diag-wrap.active { display: flex; }
-    .diag-sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
-    .diag-col-item { padding: 12px 16px; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: background 0.1s; border-left: 3px solid transparent; }
-    .diag-col-item:hover { background: var(--hover); }
-    .diag-col-item.active { background: var(--primary-light); border-left-color: var(--primary); }
-    .diag-col-name { font-weight: 600; color: var(--text); font-size: 13px; display: flex; align-items: center; gap: 6px; }
-    .diag-col-type { font-size: 11px; color: var(--text3); margin-top: 4px; font-family: var(--mono); }
-    
-    .diag-main { flex: 1; padding: 24px; overflow-y: auto; }
-    .diag-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    .diag-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 20px; box-shadow: var(--shadow); }
-    .diag-card-title { font-size: 13px; color: var(--text2); font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
-    .diag-card-val { font-size: 32px; font-weight: 700; color: var(--text); }
-    
+    .diag-wrap {
+      flex: 1;
+      display: none;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .diag-wrap.active {
+      display: flex;
+    }
+
+    .diag-sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .diag-col-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: background 0.1s;
+      border-left: 3px solid transparent;
+    }
+
+    .diag-col-item:hover {
+      background: var(--hover);
+    }
+
+    .diag-col-item.active {
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
+
+    .diag-col-name {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diag-col-type {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 4px;
+      font-family: var(--mono);
+    }
+
+    .diag-main {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .diag-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .diag-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .diag-card-title {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .diag-card-val {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
     /* PAGINATION & STATUS */
-    .pag { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-    .pgb { width: 28px; height: 28px; border-radius: var(--r); border: 1px solid var(--border); background: var(--surface); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .pgb:hover:not(:disabled) { background: var(--hover); }
-    .pgi { font-size: 13px; color: var(--text2); margin: 0 8px; }
-    
-    .sb { display: flex; align-items: center; height: 32px; padding: 0 16px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; gap: 16px; font-size: 12px; color: var(--text2); overflow-x: auto; white-space: nowrap; }
-    .sb::-webkit-scrollbar { display: none; }
-    .sb b { color: var(--text); font-weight: 600; }
-    .sb-r { margin-left: auto; display: flex; gap: 16px; }
+    .pag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .pgb {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pgb:hover:not(:disabled) {
+      background: var(--hover);
+    }
+
+    .pgi {
+      font-size: 13px;
+      color: var(--text2);
+      margin: 0 8px;
+    }
+
+    .sb {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 16px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text2);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .sb::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sb b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .sb-r {
+      margin-left: auto;
+      display: flex;
+      gap: 16px;
+    }
 
     /* CHAT PANEL (GROQ AI) */
-    .chat { width: 320px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; transition: transform 0.3s ease; z-index: 100; }
-    .chat.collapsed { display: none; }
-    .chat-h { height: 44px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); justify-content: space-between; }
-    .chat-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-    .chat-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
-    .msg { display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.5; }
-    .msg.user .mb { background: var(--primary); color: #fff; padding: 10px 14px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 90%; }
-    .msg.ai .mb { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 95%; box-shadow: var(--shadow); }
-    .msg-sql { background: #1F2937; color: #E5E7EB; padding: 10px; border-radius: 6px; font-family: var(--mono); font-size: 12px; overflow-x: auto; margin-top: 8px; position: relative; }
-    .msg-sql-btn { position: absolute; top: 4px; right: 4px; background: var(--primary); color: #fff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; }
-    .chat-in { padding: 12px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; }
-    #chat-input { flex: 1; border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; font-family: var(--font); font-size: 13px; resize: none; outline: none; max-height: 100px; }
-    #chat-input:focus { border-color: var(--primary); }
-    .chat-send { width: 36px; height: 36px; border-radius: var(--r); background: var(--primary); color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-    .chat-send:disabled { opacity: 0.5; }
+    .chat {
+      width: 320px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+
+    .chat.collapsed {
+      display: none;
+    }
+
+    .chat-h {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+    }
+
+    .chat-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg);
+    }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .msg.user .mb {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px 12px 0 12px;
+      align-self: flex-end;
+      max-width: 90%;
+    }
+
+    .msg.ai .mb {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px 12px 12px 0;
+      align-self: flex-start;
+      max-width: 95%;
+      box-shadow: var(--shadow);
+    }
+
+    .msg-sql {
+      background: #1F2937;
+      color: #E5E7EB;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .msg-sql-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .chat-in {
+      padding: 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    #chat-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 8px 12px;
+      font-family: var(--font);
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      max-height: 100px;
+    }
+
+    #chat-input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-send {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r);
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .chat-send:disabled {
+      opacity: 0.5;
+    }
 
     /* DIALOGS */
-    .overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s; padding: 16px; }
-    .overlay.open { opacity: 1; pointer-events: all; }
-    .dialog { background: var(--surface); border-radius: var(--r2); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; transform: scale(.95); transition: transform .2s; padding: 0; display: flex; flex-direction: column; }
-    .overlay.open .dialog { transform: scale(1); }
-    .dlg-title { padding: 16px 20px; font-size: 16px; font-weight: 600; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .dlg-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-    .dlg-foot { padding: 16px 20px; background: var(--header-bg); border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; border-radius: 0 0 var(--r2) var(--r2); }
-    
-    .ff { display: flex; flex-direction: column; gap: 6px; }
-    .fl-lbl { font-size: 13px; font-weight: 500; color: var(--text2); }
-    .fi, .fs { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--r); font-size: 13px; color: var(--text); background: var(--surface); font-family: var(--font); outline: none; }
-    .fi:focus, .fs:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
-    select[multiple] { min-height: 100px; padding: 4px; }
-    select[multiple] option { padding: 6px 8px; border-radius: 4px; margin-bottom: 2px; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.5);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      padding: 16px;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .dialog {
+      background: var(--surface);
+      border-radius: var(--r2);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(.95);
+      transition: transform .2s;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .overlay.open .dialog {
+      transform: scale(1);
+    }
+
+    .dlg-title {
+      padding: 16px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .dlg-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .dlg-foot {
+      padding: 16px 20px;
+      background: var(--header-bg);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-shrink: 0;
+      border-radius: 0 0 var(--r2) var(--r2);
+    }
+
+    .ff {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fl-lbl {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+    }
+
+    .fi,
+    .fs {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font-size: 13px;
+      color: var(--text);
+      background: var(--surface);
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .fi:focus,
+    .fs:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    select[multiple] {
+      min-height: 100px;
+      padding: 4px;
+    }
+
+    select[multiple] option {
+      padding: 6px 8px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+    }
 
     /* UTILS */
-    .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; padding: 48px 24px; text-align: center; color: var(--text3); }
-    .empty .material-icons { font-size: 48px; }
-    #toasts { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 2000; pointer-events: none; }
-    .snack { background: #1F2937; color: #fff; border-radius: var(--r); padding: 12px 20px; font-size: 13px; font-weight: 500; box-shadow: var(--shadow2); animation: sin .2s ease forwards; display: flex; align-items: center; gap: 10px; pointer-events: all; }
-    .snack.error { background: var(--red); }
-    @keyframes sin { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text3);
+    }
+
+    .empty .material-icons {
+      font-size: 48px;
+    }
+
+    #toasts {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .snack {
+      background: #1F2937;
+      color: #fff;
+      border-radius: var(--r);
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow2);
+      animation: sin .2s ease forwards;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: all;
+    }
+
+    .snack.error {
+      background: var(--red);
+    }
+
+    @keyframes sin {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* MOBILE RESPONSIVENESS */
-    .mobile-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; display: none; }
-    .mobile-backdrop.open { display: block; }
+    .mobile-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+      display: none;
+    }
+
+    .mobile-backdrop.open {
+      display: block;
+    }
 
     @media (max-width: 768px) {
-      .mobile-btn { display: block; }
-      .sidebar { position: absolute; height: 100%; left: -260px; }
-      .sidebar.open { left: 0; box-shadow: var(--shadow2); }
-      .chat { position: absolute; height: 100%; right: -340px; }
-      .chat.open { right: 0; box-shadow: var(--shadow2); display: flex; }
-      .chat.collapsed { display: flex; right: -340px; }
-      .toolbar { padding: 0 8px; }
-      .tbt span:not(.material-icons) { display: none; }
-      .tbt { padding: 0 8px; }
-      .dash-grid { grid-template-columns: 1fr; }
-      .diag-wrap { flex-direction: column; }
-      .diag-sidebar { width: 100%; height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
-      .diag-cards { grid-template-columns: 1fr; }
+      .mobile-btn {
+        display: block;
+      }
+
+      .sidebar {
+        position: absolute;
+        height: 100%;
+        left: -260px;
+      }
+
+      .sidebar.open {
+        left: 0;
+        box-shadow: var(--shadow2);
+      }
+
+      .chat {
+        position: absolute;
+        height: 100%;
+        right: -340px;
+      }
+
+      .chat.open {
+        right: 0;
+        box-shadow: var(--shadow2);
+        display: flex;
+      }
+
+      .chat.collapsed {
+        display: flex;
+        right: -340px;
+      }
+
+      .toolbar {
+        padding: 0 8px;
+      }
+
+      .tbt span:not(.material-icons) {
+        display: none;
+      }
+
+      .tbt {
+        padding: 0 8px;
+      }
+
+      .dash-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diag-wrap {
+        flex-direction: column;
+      }
+
+      .diag-sidebar {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .diag-cards {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -262,12 +1487,13 @@
 
   <!-- APP BAR -->
   <header class="app-bar">
-    <button class="tbb" onclick="toggleSidebarCollapse()" title="Toggle Sidebar"><span class="material-icons">menu</span></button>
+    <button class="tbb" onclick="toggleSidebarCollapse()" title="Toggle Sidebar"><span
+        class="material-icons">menu</span></button>
     <div class="app-logo">
       <div class="logo-sq"><span class="material-icons">analytics</span></div>
       <span style="display:none; @media(min-width:600px){display:inline}">SQLrooms</span>
     </div>
-    
+
     <div class="spacer"></div>
     <div class="view-tabs">
       <div class="view-tab active" id="tab-grid" onclick="switchView('grid')">Grid</div>
@@ -275,12 +1501,14 @@
       <div class="view-tab" id="tab-dash" onclick="switchView('dashboard')">Dashboard</div>
     </div>
     <div class="spacer"></div>
-    
+
     <div class="status-chip">
       <div class="dot loading" id="status-dot"></div>
       <span id="status-text" style="display:none; @media(min-width:600px){display:inline}">Init…</span>
     </div>
     <button class="mobile-btn" onclick="toggleChat()"><span class="material-icons">smart_toy</span></button>
+    <button id="tour-help-btn" onclick="startTour(true)" title="Restart Tour"
+      style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:2px solid var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700;font-size:14px;cursor:pointer;flex-shrink:0;font-family:var(--font);">?</button>
   </header>
 
   <!-- MENU BAR -->
@@ -291,10 +1519,14 @@
         <div class="dd-item" onclick="triggerUpload()"><span class="material-icons">upload_file</span>Upload file…</div>
         <div class="dd-item" onclick="loadDemo()"><span class="material-icons">science</span>Load demo data</div>
         <div class="dd-sep"></div>
-        <div class="dd-item" onclick="exportData('csv')"><span class="material-icons">description</span>Export as CSV</div>
-        <div class="dd-item" onclick="exportData('json')"><span class="material-icons">data_object</span>Export as JSON</div>
-        <div class="dd-item" onclick="exportData('parquet')"><span class="material-icons">view_column</span>Export as Parquet</div>
-        <div class="dd-item" onclick="exportData('html')"><span class="material-icons">html</span>Export as HTML Table</div>
+        <div class="dd-item" onclick="exportData('csv')"><span class="material-icons">description</span>Export as CSV
+        </div>
+        <div class="dd-item" onclick="exportData('json')"><span class="material-icons">data_object</span>Export as JSON
+        </div>
+        <div class="dd-item" onclick="exportData('parquet')"><span class="material-icons">view_column</span>Export as
+          Parquet</div>
+        <div class="dd-item" onclick="exportData('html')"><span class="material-icons">html</span>Export as HTML Table
+        </div>
       </div>
     </div>
     <div class="dd" id="dd-edit">
@@ -309,27 +1541,36 @@
       <div class="dd-menu" id="dd-data-m">
         <div class="dd-item" onclick="openFilter()"><span class="material-icons">filter_list</span>Filter…</div>
         <div class="dd-item" onclick="openD('dlg-sort')"><span class="material-icons">sort</span>Sort…</div>
-        <div class="dd-item" onclick="openD('dlg-cluster')"><span class="material-icons">format_line_spacing</span>Cluster / Order By…</div>
+        <div class="dd-item" onclick="openD('dlg-cluster')"><span
+            class="material-icons">format_line_spacing</span>Cluster / Order By…</div>
         <div class="dd-sep"></div>
-        <div class="dd-item" onclick="openD('dlg-group')"><span class="material-icons">group_work</span>Group By & Aggregate…</div>
-        <div class="dd-item" onclick="openD('dlg-agg')"><span class="material-icons">functions</span>Global Aggregation…</div>
-        <div class="dd-item" onclick="openD('dlg-join')"><span class="material-icons">join_inner</span>Join Tables…</div>
-        <div class="dd-item" onclick="openD('dlg-pivot')"><span class="material-icons">pivot_table_chart</span>Pivot Builder…</div>
+        <div class="dd-item" onclick="openD('dlg-group')"><span class="material-icons">group_work</span>Group By &
+          Aggregate…</div>
+        <div class="dd-item" onclick="openD('dlg-agg')"><span class="material-icons">functions</span>Global Aggregation…
+        </div>
+        <div class="dd-item" onclick="openD('dlg-join')"><span class="material-icons">join_inner</span>Join Tables…
+        </div>
+        <div class="dd-item" onclick="openD('dlg-pivot')"><span class="material-icons">pivot_table_chart</span>Pivot
+          Builder…</div>
         <div class="dd-sep"></div>
-        <div class="dd-item" onclick="openD('dlg-dedup')"><span class="material-icons">deblur</span>Remove Duplicates…</div>
+        <div class="dd-item" onclick="openD('dlg-dedup')"><span class="material-icons">deblur</span>Remove Duplicates…
+        </div>
       </div>
     </div>
     <div class="dd" id="dd-dash">
       <div class="mi" onclick="toggleDD('dd-dash')">Dashboards</div>
       <div class="dd-menu" id="dd-dash-m">
-        <div class="dd-item" onclick="openChartDialog()"><span class="material-icons">add_chart</span>Create Chart Widget</div>
-        <div class="dd-item" onclick="openD('dlg-auto-dash')"><span class="material-icons">auto_awesome_mosaic</span>Auto-Dashboard</div>
+        <div class="dd-item" onclick="openChartDialog()"><span class="material-icons">add_chart</span>Create Chart
+          Widget</div>
+        <div class="dd-item" onclick="openD('dlg-auto-dash')"><span
+            class="material-icons">auto_awesome_mosaic</span>Auto-Dashboard</div>
       </div>
     </div>
     <div class="dd" id="dd-ai">
       <div class="mi" onclick="toggleDD('dd-ai')">AI Settings</div>
       <div class="dd-menu" id="dd-ai-m">
-        <div class="dd-item" onclick="openD('dlg-groq')"><span class="material-icons">settings</span>Groq API Settings</div>
+        <div class="dd-item" onclick="openD('dlg-groq')"><span class="material-icons">settings</span>Groq API Settings
+        </div>
       </div>
     </div>
   </nav>
@@ -345,19 +1586,25 @@
 
   <!-- TOOLBAR (Streamlined) -->
   <div class="toolbar">
-    <button class="tbb" onclick="History.undo()" id="btn-undo" title="Undo" disabled><span class="material-icons">undo</span></button>
-    <button class="tbb" onclick="History.redo()" id="btn-redo" title="Redo" disabled><span class="material-icons">redo</span></button>
+    <button class="tbb" onclick="History.undo()" id="btn-undo" title="Undo" disabled><span
+        class="material-icons">undo</span></button>
+    <button class="tbb" onclick="History.redo()" id="btn-redo" title="Redo" disabled><span
+        class="material-icons">redo</span></button>
     <div class="tb-sep"></div>
-    <button class="tbt" onclick="showHistory()" title="History"><span class="material-icons">history</span><span>History</span></button>
-    <button class="tbt" onclick="toggleSplitView()" title="Compare Tables"><span class="material-icons">splitscreen</span><span>Compare</span></button>
+    <button class="tbt" onclick="showHistory()" title="History"><span
+        class="material-icons">history</span><span>History</span></button>
+    <button class="tbt" onclick="toggleSplitView()" title="Compare Tables"><span
+        class="material-icons">splitscreen</span><span>Compare</span></button>
     <div class="tb-sep"></div>
-    <button class="tbb" onclick="toggleSQL()" title="Toggle SQL Editor"><span class="material-icons">terminal</span></button>
-    <button class="tbb" onclick="toggleChat()" title="AI Assistant" style="margin-left:auto; color:var(--primary)"><span class="material-icons">smart_toy</span></button>
+    <button class="tbb" onclick="toggleSQL()" title="Toggle SQL Editor"><span
+        class="material-icons">terminal</span></button>
+    <button class="tbb" onclick="toggleChat()" title="AI Assistant" style="margin-left:auto; color:var(--primary)"><span
+        class="material-icons">smart_toy</span></button>
   </div>
 
   <div class="body">
     <div class="mobile-backdrop" id="mobile-backdrop" onclick="closeMobilePanels()"></div>
-    
+
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sh">TABLES</div>
@@ -365,9 +1612,9 @@
         <div class="sc-sec">
           <div class="upload-zone" id="upload-zone">
             <span class="material-icons">cloud_upload</span>
-            <div class="uz-text">Drop CSV/Excel/Parquet here</div>
+            <div class="uz-text">Drop CSV / JSON / Parquet here</div>
           </div>
-          <input type="file" id="file-input" accept=".csv,.json,.parquet,.xlsx,.xls" multiple>
+          <input type="file" id="file-input" accept=".csv,.json,.parquet" multiple>
         </div>
         <div id="table-list"></div>
       </div>
@@ -375,7 +1622,7 @@
 
     <!-- MAIN -->
     <main class="main" id="main">
-      
+
       <!-- SQL PANEL -->
       <div class="sql-panel" id="sql-panel">
         <div class="sql-body">
@@ -383,12 +1630,15 @@
             <textarea id="sql-editor" placeholder="SELECT * FROM your_table"></textarea>
             <div class="sql-error" id="sql-error">
               <span id="sql-error-msg"></span>
-              <button class="btn btn-c btn-sm" onclick="fixSQLError()"><span class="material-icons">auto_fix_high</span> Auto-Fix</button>
+              <button class="btn btn-c btn-sm" onclick="fixSQLError()"><span class="material-icons">auto_fix_high</span>
+                Auto-Fix</button>
             </div>
           </div>
           <div class="sql-acts">
             <button class="btn btn-c" id="run-btn"><span class="material-icons">play_arrow</span>Run</button>
-            <button class="btn btn-o" onclick="saveAsNewTable()" title="Save current nested query as a clean base table"><span class="material-icons">save</span>Save as Table</button>
+            <button class="btn btn-o" onclick="saveAsNewTable()"
+              title="Save current nested query as a clean base table"><span class="material-icons">save</span>Save as
+              Table</button>
             <button class="btn btn-o" onclick="toggleSQL()"><span class="material-icons">close</span></button>
           </div>
         </div>
@@ -401,15 +1651,18 @@
             <span class="material-icons">grid_on</span>
             <h3>No data loaded</h3>
             <p>Upload a file or load demo data to get started.</p>
-            <button class="btn btn-o" onclick="loadDemo()" style="margin-top:12px"><span class="material-icons">science</span> Load Demo Data</button>
+            <button class="btn btn-o" onclick="loadDemo()" style="margin-top:12px"><span
+                class="material-icons">science</span> Load Demo Data</button>
           </div>
         </div>
         <!-- Split View Pane -->
         <div class="grid-pane" id="grid-split" style="display:none; border-left:1px solid var(--border);">
           <div class="sh" style="background:var(--header-bg); justify-content:flex-start; gap:12px">
             <span class="material-icons" style="font-size:16px">compare_arrows</span>
-            <select class="fs" id="split-table-sel" onchange="loadSplitTable(this.value)" style="width:200px; height:26px; padding:0 8px;"></select>
-            <button class="tbb" onclick="toggleSplitView()" style="margin-left:auto"><span class="material-icons">close</span></button>
+            <select class="fs" id="split-table-sel" onchange="loadSplitTable(this.value)"
+              style="width:200px; height:26px; padding:0 8px;"></select>
+            <button class="tbb" onclick="toggleSplitView()" style="margin-left:auto"><span
+                class="material-icons">close</span></button>
           </div>
           <div id="grid-split-content" style="height:calc(100% - 44px); overflow:auto;"></div>
         </div>
@@ -435,8 +1688,10 @@
         <div class="dash-header">
           <div class="dash-title">Analytics Dashboard</div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-o" onclick="openD('dlg-auto-dash')"><span class="material-icons">auto_awesome_mosaic</span> Auto</button>
-            <button class="btn btn-c" onclick="openChartDialog()"><span class="material-icons">add</span> Widget</button>
+            <button class="btn btn-o" onclick="openD('dlg-auto-dash')"><span
+                class="material-icons">auto_awesome_mosaic</span> Auto</button>
+            <button class="btn btn-c" onclick="openChartDialog()"><span class="material-icons">add</span>
+              Widget</button>
           </div>
         </div>
         <div class="dash-grid" id="dash-grid">
@@ -449,10 +1704,13 @@
 
       <!-- PAGINATION -->
       <div class="pag" id="pag" style="display:none">
-        <button class="pgb" id="pg-prev" onclick="goPage('prev')"><span class="material-icons">chevron_left</span></button>
+        <button class="pgb" id="pg-prev" onclick="goPage('prev')"><span
+            class="material-icons">chevron_left</span></button>
         <span class="pgi" id="pg-info">Page 1</span>
-        <button class="pgb" id="pg-next" onclick="goPage('next')"><span class="material-icons">chevron_right</span></button>
-        <select class="fs" id="pg-size" onchange="changePageSize(+this.value)" style="width:90px; margin-left:12px; padding:4px;">
+        <button class="pgb" id="pg-next" onclick="goPage('next')"><span
+            class="material-icons">chevron_right</span></button>
+        <select class="fs" id="pg-size" onchange="changePageSize(+this.value)"
+          style="width:90px; margin-left:12px; padding:4px;">
           <option value="50">50 rows</option>
           <option value="100" selected>100 rows</option>
           <option value="500">500 rows</option>
@@ -473,21 +1731,27 @@
     <!-- CHAT PANEL -->
     <aside class="chat collapsed" id="chat">
       <div class="chat-h">
-        <div class="chat-title"><span class="material-icons" style="color:var(--primary)">smart_toy</span> Groq AI</div><SPAN STYLE="font-size:10px; color:var(--primary); background:var(--primary-light); padding:2px 4px; border-radius:4px; font-weight:600;">BETA</SPAN> 
+        <div class="chat-title"><span class="material-icons" style="color:var(--primary)">smart_toy</span> Groq AI</div>
+        <SPAN
+          STYLE="font-size:10px; color:var(--primary); background:var(--primary-light); padding:2px 4px; border-radius:4px; font-weight:600;">BETA</SPAN>
         <div style="display:flex; gap:4px">
-          <button class="tbb" onclick="clearChat()" title="Reset Chat"><span class="material-icons">delete_sweep</span></button>
-          <button class="tbb" onclick="openD('dlg-groq')" title="Settings"><span class="material-icons">settings</span></button>
+          <button class="tbb" onclick="clearChat()" title="Reset Chat"><span
+              class="material-icons">delete_sweep</span></button>
+          <button class="tbb" onclick="openD('dlg-groq')" title="Settings"><span
+              class="material-icons">settings</span></button>
           <button class="tbb" onclick="toggleChat()"><span class="material-icons">close</span></button>
         </div>
       </div>
       <div class="chat-msgs" id="chat-msgs">
         <div class="msg ai">
-          <div class="mb">Hi! I'm your Groq-powered SQL assistant. Set your API key in settings, then ask me to analyze your data, fix queries, or build dashboards!</div>
+          <div class="mb">Hi! I'm your Groq-powered SQL assistant. Set your API key in settings, then ask me to analyze
+            your data, fix queries, or build dashboards!</div>
         </div>
       </div>
       <div class="chat-in">
         <textarea id="chat-input" placeholder="Ask AI to query data..." rows="1"></textarea>
-        <button class="chat-send" id="chat-send-btn" onclick="sendChat()"><span class="material-icons">send</span></button>
+        <button class="chat-send" id="chat-send-btn" onclick="sendChat()"><span
+            class="material-icons">send</span></button>
       </div>
     </aside>
   </div>
@@ -533,7 +1797,8 @@
       <div class="dlg-body" id="filter-container">
       </div>
       <div class="dlg-body" style="padding-top:0">
-         <button class="btn btn-o btn-sm" onclick="addFilterRow()"><span class="material-icons">add</span> Add Condition</button>
+        <button class="btn btn-o btn-sm" onclick="addFilterRow()"><span class="material-icons">add</span> Add
+          Condition</button>
       </div>
       <div class="dlg-foot">
         <button class="btn btn-t" onclick="closeD('dlg-filter')">Cancel</button>
@@ -548,7 +1813,10 @@
       <div class="dlg-body">
         <div class="ff"><label class="fl-lbl">Column</label><select class="fs" id="s-col"></select></div>
         <div class="ff"><label class="fl-lbl">Direction</label>
-          <select class="fs" id="s-dir"><option value="ASC">Ascending</option><option value="DESC">Descending</option></select>
+          <select class="fs" id="s-dir">
+            <option value="ASC">Ascending</option>
+            <option value="DESC">Descending</option>
+          </select>
         </div>
       </div>
       <div class="dlg-foot">
@@ -565,7 +1833,8 @@
         <div class="ff">
           <label class="fl-lbl">Columns to group/order by (Multi-select)</label>
           <select class="fs" id="cl-cols" multiple></select>
-          <span style="font-size:11px; color:var(--text3)">This will sort the data sequentially by the selected columns, visually grouping similar rows together without aggregating them.</span>
+          <span style="font-size:11px; color:var(--text3)">This will sort the data sequentially by the selected columns,
+            visually grouping similar rows together without aggregating them.</span>
         </div>
       </div>
       <div class="dlg-foot">
@@ -579,10 +1848,17 @@
     <div class="dialog">
       <div class="dlg-title"><span class="material-icons">group_work</span> Group By & Aggregate</div>
       <div class="dlg-body">
-        <div class="ff"><label class="fl-lbl">Group By (Multi-select)</label><select class="fs" id="g-cols" multiple></select></div>
+        <div class="ff"><label class="fl-lbl">Group By (Multi-select)</label><select class="fs" id="g-cols"
+            multiple></select></div>
         <div class="ff"><label class="fl-lbl">Measure Column</label><select class="fs" id="g-val"></select></div>
         <div class="ff"><label class="fl-lbl">Aggregation</label>
-          <select class="fs" id="g-fn"><option>COUNT</option><option>SUM</option><option>AVG</option><option>MAX</option><option>MIN</option></select>
+          <select class="fs" id="g-fn">
+            <option>COUNT</option>
+            <option>SUM</option>
+            <option>AVG</option>
+            <option>MAX</option>
+            <option>MIN</option>
+          </select>
         </div>
       </div>
       <div class="dlg-foot">
@@ -598,7 +1874,13 @@
       <div class="dlg-body">
         <div class="ff"><label class="fl-lbl">Measure Column</label><select class="fs" id="ga-val"></select></div>
         <div class="ff"><label class="fl-lbl">Aggregation Function</label>
-          <select class="fs" id="ga-fn"><option>COUNT</option><option>SUM</option><option>AVG</option><option>MAX</option><option>MIN</option></select>
+          <select class="fs" id="ga-fn">
+            <option>COUNT</option>
+            <option>SUM</option>
+            <option>AVG</option>
+            <option>MAX</option>
+            <option>MIN</option>
+          </select>
         </div>
       </div>
       <div class="dlg-foot">
@@ -615,7 +1897,8 @@
         <div class="ff">
           <label class="fl-lbl">Columns to check for uniqueness (Multi-select)</label>
           <select class="fs" id="dd-cols" multiple></select>
-          <span style="font-size:11px; color:var(--text3)">Only the first occurrence of each distinct combination will be kept.</span>
+          <span style="font-size:11px; color:var(--text3)">Only the first occurrence of each distinct combination will
+            be kept.</span>
         </div>
       </div>
       <div class="dlg-foot">
@@ -630,13 +1913,18 @@
       <div class="dlg-title"><span class="material-icons">join_inner</span> Join Tables</div>
       <div class="dlg-body">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px">
-          <div class="ff"><label class="fl-lbl">Left Table</label><select class="fs" id="j-lt" onchange="updateJoinCols()"></select></div>
-          <div class="ff"><label class="fl-lbl">Right Table</label><select class="fs" id="j-rt" onchange="updateJoinCols()"></select></div>
+          <div class="ff"><label class="fl-lbl">Left Table</label><select class="fs" id="j-lt"
+              onchange="updateJoinCols()"></select></div>
+          <div class="ff"><label class="fl-lbl">Right Table</label><select class="fs" id="j-rt"
+              onchange="updateJoinCols()"></select></div>
           <div class="ff"><label class="fl-lbl">Left Key</label><select class="fs" id="j-lk"></select></div>
           <div class="ff"><label class="fl-lbl">Right Key</label><select class="fs" id="j-rk"></select></div>
         </div>
         <div class="ff"><label class="fl-lbl">Join Type</label>
-          <select class="fs" id="j-type"><option value="INNER JOIN">Inner</option><option value="LEFT JOIN">Left</option></select>
+          <select class="fs" id="j-type">
+            <option value="INNER JOIN">Inner</option>
+            <option value="LEFT JOIN">Left</option>
+          </select>
         </div>
       </div>
       <div class="dlg-foot">
@@ -650,11 +1938,16 @@
     <div class="dialog">
       <div class="dlg-title"><span class="material-icons">pivot_table_chart</span> Pivot Builder</div>
       <div class="dlg-body">
-        <div class="ff"><label class="fl-lbl">Rows (Multi-select)</label><select class="fs" id="pv-rows" multiple></select></div>
+        <div class="ff"><label class="fl-lbl">Rows (Multi-select)</label><select class="fs" id="pv-rows"
+            multiple></select></div>
         <div class="ff"><label class="fl-lbl">Columns (Pivot On)</label><select class="fs" id="pv-col"></select></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
           <div class="ff"><label class="fl-lbl">Measure</label><select class="fs" id="pv-val"></select></div>
-          <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="pv-agg"><option>SUM</option><option>COUNT</option><option>AVG</option></select></div>
+          <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="pv-agg">
+              <option>SUM</option>
+              <option>COUNT</option>
+              <option>AVG</option>
+            </select></div>
         </div>
       </div>
       <div class="dlg-foot">
@@ -666,7 +1959,8 @@
 
   <div class="overlay" id="dlg-chart">
     <div class="dialog">
-      <div class="dlg-title"><span class="material-icons">add_chart</span> <span id="ch-dlg-title">Create Chart Widget</span></div>
+      <div class="dlg-title"><span class="material-icons">add_chart</span> <span id="ch-dlg-title">Create Chart
+          Widget</span></div>
       <div class="dlg-body">
         <input type="hidden" id="ch-edit-id" value="">
         <div class="ff"><label class="fl-lbl">Title</label><input class="fi" id="ch-title" value="New Chart"></div>
@@ -680,7 +1974,7 @@
             <option value="radar">Radar Chart</option>
           </select>
         </div>
-        
+
         <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
           <input type="checkbox" id="ch-custom-sql-toggle" onchange="toggleChartMode()">
           <label for="ch-custom-sql-toggle" class="fl-lbl">Use Custom SQL Query</label>
@@ -690,15 +1984,21 @@
           <div class="ff"><label class="fl-lbl">X Axis (Dimension)</label><select class="fs" id="ch-x"></select></div>
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
             <div class="ff"><label class="fl-lbl">Y Axis (Measure)</label><select class="fs" id="ch-y"></select></div>
-            <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="ch-agg"><option>SUM</option><option>COUNT</option><option>AVG</option></select></div>
+            <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="ch-agg">
+                <option>SUM</option>
+                <option>COUNT</option>
+                <option>AVG</option>
+              </select></div>
           </div>
         </div>
 
         <div id="ch-sql-mode" style="display:none;">
           <div class="ff">
             <label class="fl-lbl">Custom SQL Query</label>
-            <textarea class="fi" id="ch-sql" rows="4" placeholder="SELECT category AS label, SUM(sales) AS val FROM..."></textarea>
-            <span style="font-size:11px; color:var(--text3)">Must return two columns: one for X-axis (label) and one for Y-axis (val).</span>
+            <textarea class="fi" id="ch-sql" rows="4"
+              placeholder="SELECT category AS label, SUM(sales) AS val FROM..."></textarea>
+            <span style="font-size:11px; color:var(--text3)">Must return two columns: one for X-axis (label) and one for
+              Y-axis (val).</span>
           </div>
         </div>
       </div>
@@ -714,8 +2014,13 @@
       <div class="dlg-title"><span class="material-icons">auto_awesome_mosaic</span> Auto-Dashboard</div>
       <div class="dlg-body">
         <div class="ff"><label class="fl-lbl">Primary Metric</label><select class="fs" id="ad-metric"></select></div>
-        <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="ad-agg"><option>SUM</option><option>AVG</option><option>COUNT</option></select></div>
-        <div class="ff"><label class="fl-lbl">Dimensions (Multi-select)</label><select class="fs" id="ad-dims" multiple></select></div>
+        <div class="ff"><label class="fl-lbl">Aggregation</label><select class="fs" id="ad-agg">
+            <option>SUM</option>
+            <option>AVG</option>
+            <option>COUNT</option>
+          </select></div>
+        <div class="ff"><label class="fl-lbl">Dimensions (Multi-select)</label><select class="fs" id="ad-dims"
+            multiple></select></div>
       </div>
       <div class="dlg-foot">
         <button class="btn btn-t" onclick="closeD('dlg-auto-dash')">Cancel</button>
@@ -728,11 +2033,14 @@
     <div class="dialog">
       <div class="dlg-title"><span class="material-icons">functions</span> Create Formula Column</div>
       <div class="dlg-body">
-        <div class="ff"><label class="fl-lbl">New Column Name</label><input class="fi" id="fm-name" value="new_col"></div>
+        <div class="ff"><label class="fl-lbl">New Column Name</label><input class="fi" id="fm-name" value="new_col">
+        </div>
         <div class="ff">
           <label class="fl-lbl">Formula (SQL Expression)</label>
-          <textarea class="fi" id="fm-expr" rows="3" placeholder="e.g. IF(spend > 20, 'High', 'Low') or spend * 1.2"></textarea>
-          <span style="font-size:11px; color:var(--text3)">Use standard DuckDB SQL logic (IF, CASE, math operators).</span>
+          <textarea class="fi" id="fm-expr" rows="3"
+            placeholder="e.g. IF(spend > 20, 'High', 'Low') or spend * 1.2"></textarea>
+          <span style="font-size:11px; color:var(--text3)">Use standard DuckDB SQL logic (IF, CASE, math
+            operators).</span>
         </div>
       </div>
       <div class="dlg-foot">
@@ -774,7 +2082,7 @@
             await runQ(S.sql, { silent: true, skipHistory: true });
           }
           this.pos--; toast('Undo successful');
-        } catch(e) { toast('Undo failed', 'error'); }
+        } catch (e) { toast('Undo failed', 'error'); }
         this.isExec = false; this.updateUI();
       },
       async redo() {
@@ -789,7 +2097,7 @@
             await runQ(S.sql, { silent: true, skipHistory: true });
           }
           toast('Redo successful');
-        } catch(e) { toast('Redo failed', 'error'); this.pos--; }
+        } catch (e) { toast('Redo failed', 'error'); this.pos--; }
         this.isExec = false; this.updateUI();
       },
       updateUI() {
@@ -799,32 +2107,32 @@
     };
 
     function showHistory() {
-      const html = History.stack.map((h, i) => `<div style="padding:10px; border-bottom:1px solid var(--border-light); font-family:var(--mono); font-size:12px; background: ${i===History.pos?'var(--primary-light)':'transparent'}">${escH(h.newSql || h.prevSql || `Edit ${h.col}`)}</div>`).join('');
+      const html = History.stack.map((h, i) => `<div style="padding:10px; border-bottom:1px solid var(--border-light); font-family:var(--mono); font-size:12px; background: ${i === History.pos ? 'var(--primary-light)' : 'transparent'}">${escH(h.newSql || h.prevSql || `Edit ${h.col}`)}</div>`).join('');
       document.getElementById('hist-body').innerHTML = html || '<div style="color:var(--text3)">No history yet.</div>';
       openD('dlg-history');
     }
 
     async function exportData(format) {
-      if(!S.rows.length) return toast('No data to export', 'error');
+      if (!S.rows.length) return toast('No data to export', 'error');
       try {
         let content, mime, ext;
-        if(format === 'csv') {
+        if (format === 'csv') {
           const cols = Object.keys(S.rows[0]).filter(c => c !== '__rowid');
-          content = [cols.join(',')].concat(S.rows.map(r => cols.map(c => JSON.stringify(r[c]??'')).join(','))).join('\n');
+          content = [cols.join(',')].concat(S.rows.map(r => cols.map(c => JSON.stringify(r[c] ?? '')).join(','))).join('\n');
           mime = 'text/csv'; ext = 'csv';
         } else if (format === 'json') {
-          content = JSON.stringify(S.rows.map(r => { const o={...r}; delete o.__rowid; return o; }), null, 2);
+          content = JSON.stringify(S.rows.map(r => { const o = { ...r }; delete o.__rowid; return o; }), null, 2);
           mime = 'application/json'; ext = 'json';
         } else if (format === 'html') {
           const cols = Object.keys(S.rows[0]).filter(c => c !== '__rowid');
-          content = `<table border="1"><thead><tr>${cols.map(c=>`<th>${escH(c)}</th>`).join('')}</tr></thead><tbody>${S.rows.map(r=>`<tr>${cols.map(c=>`<td>${escH(r[c]??'')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+          content = `<table border="1"><thead><tr>${cols.map(c => `<th>${escH(c)}</th>`).join('')}</tr></thead><tbody>${S.rows.map(r => `<tr>${cols.map(c => `<td>${escH(r[c] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
           mime = 'text/html'; ext = 'html';
         } else if (format === 'parquet') {
           setStatus('loading', 'Exporting Parquet...');
           const filename = `export_${Date.now()}.parquet`;
           await S.conn.query(`COPY (${S.sql}) TO '${filename}' (FORMAT PARQUET)`);
           const buffer = await S.db.copyFileToBuffer(filename);
-          const blob = new Blob([buffer], {type: 'application/octet-stream'});
+          const blob = new Blob([buffer], { type: 'application/octet-stream' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a'); a.href = url; a.download = filename;
           a.click(); URL.revokeObjectURL(url);
@@ -832,13 +2140,13 @@
           closeAllDD();
           return;
         }
-        
-        const blob = new Blob([content], {type: mime});
+
+        const blob = new Blob([content], { type: mime });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url; a.download = `export_${Date.now()}.${ext}`;
         a.click(); URL.revokeObjectURL(url);
         closeAllDD();
-      } catch(e) { toast('Export failed: ' + e.message, 'error'); setStatus('ready', 'Ready'); }
+      } catch (e) { toast('Export failed: ' + e.message, 'error'); setStatus('ready', 'Ready'); }
     }
 
     // ══════════════════════════════════════
@@ -857,12 +2165,11 @@
         await S.db.instantiate(bundle.mainModule, bundle.pthreadWorker);
         URL.revokeObjectURL(wUrl);
         S.conn = await S.db.connect();
-        
+
         setStatus('loading', 'Loading Extensions...');
-        // ADDED 'excel' TO THE EXTENSIONS ARRAY
-        const exts = ['icu', 'json', 'parquet', 'fts', 'autocomplete', 'excel'];
+        const exts = ['icu', 'json', 'parquet', 'fts', 'autocomplete'];
         for (const ext of exts) {
-          try { await S.conn.query(`INSTALL ${ext}; LOAD ${ext};`); } 
+          try { await S.conn.query(`INSTALL ${ext}; LOAD ${ext};`); }
           catch (e) { console.warn(`Extension ${ext} not loaded:`, e.message); }
         }
 
@@ -897,15 +2204,14 @@
         try {
           const buf = await f.arrayBuffer();
           await S.db.registerFileBuffer(f.name, new Uint8Array(buf));
-          
+
           const ext = f.name.split('.').pop().toLowerCase();
-          
-          // DYNAMICALLY SELECT THE CORRECT READ FUNCTION
+
+          // Select the correct read function
           let readFn = 'read_csv_auto';
           if (ext === 'parquet') readFn = 'read_parquet';
           else if (ext === 'json') readFn = 'read_json_auto';
-          else if (ext === 'xlsx' || ext === 'xls') readFn = 'read_xlsx';
-          
+
           await S.conn.query(`CREATE OR REPLACE TABLE "${tbl}" AS SELECT row_number() OVER () as __rowid, * FROM ${readFn}('${f.name}')`);
           await refreshTables();
           setActive(tbl);
@@ -942,28 +2248,28 @@
       try {
         const res = await S.conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema='main'");
         const tableNames = res.toArray().map(r => r.table_name);
-        
+
         for (const name of tableNames) {
           if (!S.tables[name]) {
             const cr = await S.conn.query(`SELECT COUNT(*) AS n FROM "${name}"`);
             const dr = await S.conn.query(`DESCRIBE "${name}"`);
-            S.tables[name] = { 
+            S.tables[name] = {
               rowCount: Number(cr.toArray()[0].n),
               cols: dr.toArray().map(r => ({ name: r.column_name, type: r.column_type }))
             };
           }
         }
         // Remove deleted tables
-        Object.keys(S.tables).forEach(k => { if(!tableNames.includes(k)) delete S.tables[k]; });
+        Object.keys(S.tables).forEach(k => { if (!tableNames.includes(k)) delete S.tables[k]; });
         renderSidebar();
-      } catch(e) { console.error("Error refreshing tables", e); }
+      } catch (e) { console.error("Error refreshing tables", e); }
     }
 
     function setActive(name) {
       S.active = name; S.page = 0;
       renderSidebar(); // Ensure active class is updated
       runQ(`SELECT * FROM "${name}"`);
-      if(S.viewMode === 'diagnostics') renderDiagnosticsSidebar();
+      if (S.viewMode === 'diagnostics') renderDiagnosticsSidebar();
     }
 
     // ══════════════════════════════════════
@@ -971,31 +2277,31 @@
     // ══════════════════════════════════════
     async function runQ(sql, opts = {}) {
       if (!S.conn || !sql) return;
-      
-      sql = sql.trim().replace(/;+$/, ''); 
+
+      sql = sql.trim().replace(/;+$/, '');
 
       const t0 = performance.now();
       const errEl = document.getElementById('sql-error');
       errEl.classList.remove('show');
-      
+
       if (!opts.skipHistory && S.sql !== sql) History.push({ type: 'sql', prevSql: S.sql || sql, newSql: sql });
 
       try {
         let exec = sql;
         if (/^\s*SELECT/i.test(sql) && !opts.noPag) exec = `SELECT * FROM (${sql}) LIMIT ${S.pageSize} OFFSET ${S.page * S.pageSize}`;
-        
+
         const res = await S.conn.query(exec);
         S.rows = res.toArray().map(r => r.toJSON ? r.toJSON() : Object.fromEntries(r));
         S.cols = res.schema.fields.map(f => ({ name: f.name, type: String(f.type) }));
         S.sql = sql;
-        
+
         try {
           const c = await S.conn.query(`SELECT COUNT(*) AS n FROM (${sql})`);
           S.total = Number(c.toArray()[0].n);
         } catch { S.total = S.rows.length; }
 
         if (!opts.silent) document.getElementById('sql-editor').value = sql;
-        
+
         // Detect if query modified schema (CREATE/DROP/ALTER)
         if (/^\s*(CREATE|DROP|ALTER)\s+/i.test(sql)) {
           await refreshTables();
@@ -1014,13 +2320,13 @@
 
     async function saveAsNewTable() {
       const name = prompt("Enter new table name:");
-      if(!name) return;
+      if (!name) return;
       try {
         await S.conn.query(`CREATE OR REPLACE TABLE "${name}" AS ${S.sql}`);
         await refreshTables();
         setActive(name);
         toast(`Saved as ${name}`);
-      } catch(e) { toast('Error saving table', 'error'); }
+      } catch (e) { toast('Error saving table', 'error'); }
     }
 
     // ══════════════════════════════════════
@@ -1029,17 +2335,17 @@
     let filterRows = [];
     function openFilter() {
       closeAllDD();
-      filterRows = [{ logic: '', col: S.cols.find(c=>c.name!=='__rowid')?.name || '', op: '=', val: '' }];
+      filterRows = [{ logic: '', col: S.cols.find(c => c.name !== '__rowid')?.name || '', op: '=', val: '' }];
       renderFilterRows();
       openD('dlg-filter');
     }
     function addFilterRow() {
-      filterRows.push({ logic: 'AND', col: S.cols.find(c=>c.name!=='__rowid')?.name || '', op: '=', val: '' });
+      filterRows.push({ logic: 'AND', col: S.cols.find(c => c.name !== '__rowid')?.name || '', op: '=', val: '' });
       renderFilterRows();
     }
     function removeFilterRow(idx) {
       filterRows.splice(idx, 1);
-      if(filterRows.length > 0) filterRows[0].logic = '';
+      if (filterRows.length > 0) filterRows[0].logic = '';
       renderFilterRows();
     }
     function renderFilterRows() {
@@ -1048,15 +2354,15 @@
         <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
           ${i === 0 ? `<div style="width:64px; font-size:12px; font-weight:600; color:var(--text3)">WHERE</div>` : `
           <select class="fs" style="width:64px" onchange="filterRows[${i}].logic=this.value">
-            <option value="AND" ${r.logic==='AND'?'selected':''}>AND</option><option value="OR" ${r.logic==='OR'?'selected':''}>OR</option>
+            <option value="AND" ${r.logic === 'AND' ? 'selected' : ''}>AND</option><option value="OR" ${r.logic === 'OR' ? 'selected' : ''}>OR</option>
           </select>`}
           <select class="fs" style="flex:1" onchange="filterRows[${i}].col=this.value">
-            ${cols.map(c => `<option value="${escA(c.name)}" ${r.col===c.name?'selected':''}>${escH(c.name)}</option>`).join('')}
+            ${cols.map(c => `<option value="${escA(c.name)}" ${r.col === c.name ? 'selected' : ''}>${escH(c.name)}</option>`).join('')}
           </select>
           <select class="fs" style="width:110px" onchange="filterRows[${i}].op=this.value">
-            <option value="=" ${r.op==='='?'selected':''}>=</option><option value="!=" ${r.op==='!='?'selected':''}>!=</option>
-            <option value=">" ${r.op==='>'?'selected':''}>&gt;</option><option value="<" ${r.op==='<'?'selected':''}>&lt;</option>
-            <option value="ILIKE" ${r.op==='ILIKE'?'selected':''}>Contains</option><option value="NOT ILIKE" ${r.op==='NOT ILIKE'?'selected':''}>Not Contains</option>
+            <option value="=" ${r.op === '=' ? 'selected' : ''}>=</option><option value="!=" ${r.op === '!=' ? 'selected' : ''}>!=</option>
+            <option value=">" ${r.op === '>' ? 'selected' : ''}>&gt;</option><option value="<" ${r.op === '<' ? 'selected' : ''}>&lt;</option>
+            <option value="ILIKE" ${r.op === 'ILIKE' ? 'selected' : ''}>Contains</option><option value="NOT ILIKE" ${r.op === 'NOT ILIKE' ? 'selected' : ''}>Not Contains</option>
           </select>
           <input class="fi" style="flex:1" value="${escA(r.val)}" onchange="filterRows[${i}].val=this.value" placeholder="Value...">
           <button class="tbb" onclick="removeFilterRow(${i})"><span class="material-icons">close</span></button>
@@ -1066,8 +2372,8 @@
     function applyAdvancedFilter() {
       if (!filterRows.length) return closeD('dlg-filter');
       let conds = filterRows.map((r, i) => {
-        const safeVal = isNaN(r.val) ? `'${r.val.replace(/'/g,"''")}'` : r.val;
-        const expr = r.op.includes('ILIKE') ? `"${r.col}" ${r.op} '%${r.val.replace(/'/g,"''")}%'` : `"${r.col}" ${r.op} ${safeVal}`;
+        const safeVal = isNaN(r.val) ? `'${r.val.replace(/'/g, "''")}'` : r.val;
+        const expr = r.op.includes('ILIKE') ? `"${r.col}" ${r.op} '%${r.val.replace(/'/g, "''")}%'` : `"${r.col}" ${r.op} ${safeVal}`;
         return i === 0 ? expr : `${r.logic} ${expr}`;
       }).join(' ');
       closeD('dlg-filter'); runQ(`SELECT * FROM (${S.sql}) AS t WHERE ${conds}`);
@@ -1081,7 +2387,7 @@
     function applyCluster() {
       const cols = [...document.getElementById('cl-cols').selectedOptions].map(o => o.value);
       if (!cols.length) return toast('Select columns to cluster by', 'error');
-      closeD('dlg-cluster'); runQ(`SELECT * FROM (${S.sql}) AS t ORDER BY ${cols.map(c=>`"${c}"`).join(', ')}`);
+      closeD('dlg-cluster'); runQ(`SELECT * FROM (${S.sql}) AS t ORDER BY ${cols.map(c => `"${c}"`).join(', ')}`);
     }
 
     function applyGroup() {
@@ -1101,15 +2407,15 @@
 
     function applyDedup() {
       const cols = [...document.getElementById('dd-cols').selectedOptions].map(o => o.value);
-      if(!cols.length) return toast('Select columns for uniqueness check', 'error');
+      if (!cols.length) return toast('Select columns for uniqueness check', 'error');
       closeD('dlg-dedup');
-      runQ(`SELECT DISTINCT ON (${cols.map(c=>`"${c}"`).join(', ')}) * FROM (${S.sql}) AS t`);
+      runQ(`SELECT DISTINCT ON (${cols.map(c => `"${c}"`).join(', ')}) * FROM (${S.sql}) AS t`);
     }
 
     function updateJoinCols() {
       const lt = document.getElementById('j-lt').value, rt = document.getElementById('j-rt').value;
-      if(S.tables[lt]) document.getElementById('j-lk').innerHTML = S.tables[lt].cols.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
-      if(S.tables[rt]) document.getElementById('j-rk').innerHTML = S.tables[rt].cols.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+      if (S.tables[lt]) document.getElementById('j-lk').innerHTML = S.tables[lt].cols.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+      if (S.tables[rt]) document.getElementById('j-rk').innerHTML = S.tables[rt].cols.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
     }
 
     function applyJoin() {
@@ -1130,7 +2436,7 @@
       menu.style.left = e.clientX + 'px'; menu.style.top = e.clientY + 'px';
       menu.classList.add('open');
     }
-    
+
     function renameColumn() {
       closeAllDD();
       const newName = prompt('Enter new column name:', activeCol.name);
@@ -1178,7 +2484,7 @@
       document.getElementById('pag').style.display = 'flex';
       const off = S.page * S.pageSize;
       const displayCols = S.cols.filter(c => c.name !== '__rowid');
-      
+
       const thead = `<thead><tr><th class="rn">#</th>${displayCols.map(c => `
         <th style="min-width:100px" data-col="${escA(c.name)}">
           <div class="thc" draggable="true" ondragstart="colDragStart(event)" ondragover="colDragOver(event)" ondrop="colDrop(event)" ondragleave="colDragLeave(event)">
@@ -1186,20 +2492,20 @@
             <div class="th-menu-btn" onclick="openColMenu(event, '${escA(c.name)}', '${c.type}')"><span class="material-icons" style="font-size:14px">more_vert</span></div>
           </div><div class="th-resizer" onmousedown="initResize(event)"></div>
         </th>`).join('')}</tr></thead>`;
-      
+
       const isBase = S.sql.trim().toUpperCase().startsWith(`SELECT * FROM "${S.active?.toUpperCase()}"`) || S.sql.trim().toUpperCase().startsWith(`SELECT * FROM ${S.active?.toUpperCase()}`);
-      
+
       const tbody = `<tbody>${S.rows.map((r, i) => `
         <tr data-rowid="${r.__rowid || ''}">
           <td class="rn">${off + i + 1}</td>
           ${displayCols.map(c => {
-            const val = r[c.name];
-            const cls = typeof val === 'number' ? 'num' : '';
-            const editCls = (isBase && r.__rowid) ? 'editable' : '';
-            return `<td class="${cls} ${editCls}" ondblclick="editCell(this, '${escA(c.name)}')">${val == null ? '' : escH(val)}</td>`;
-          }).join('')}
+        const val = r[c.name];
+        const cls = typeof val === 'number' ? 'num' : '';
+        const editCls = (isBase && r.__rowid) ? 'editable' : '';
+        return `<td class="${cls} ${editCls}" ondblclick="editCell(this, '${escA(c.name)}')">${val == null ? '' : escH(val)}</td>`;
+      }).join('')}
         </tr>`).join('')}</tbody>`;
-        
+
       el.innerHTML = `<table class="sheet">${thead}${tbody}</table>`;
       renderPag();
     }
@@ -1212,7 +2518,7 @@
       td.classList.add('editing');
       td.innerHTML = `<input type="text" value="${escA(oldVal)}">`;
       const input = td.querySelector('input'); input.focus();
-      
+
       const save = async () => {
         td.classList.remove('editing');
         const newVal = input.value;
@@ -1222,8 +2528,8 @@
             History.push({ type: 'edit', table: S.active, col: colName, rowid, oldVal, newVal });
             td.innerText = newVal; toast('Updated');
             const rowIdx = S.rows.findIndex(r => String(r.__rowid) === String(rowid));
-            if(rowIdx > -1) S.rows[rowIdx][colName] = newVal;
-          } catch(e) { toast('Edit failed', 'error'); td.innerText = oldVal; }
+            if (rowIdx > -1) S.rows[rowIdx][colName] = newVal;
+          } catch (e) { toast('Edit failed', 'error'); td.innerText = oldVal; }
         } else td.innerText = oldVal;
       };
       input.onblur = save;
@@ -1262,12 +2568,12 @@
         const sel = document.getElementById('split-table-sel');
         sel.innerHTML = Object.keys(S.tables).map(t => `<option value="${escA(t)}">${escH(t)}</option>`).join('');
         splitPane.style.display = 'block';
-        if(sel.value) loadSplitTable(sel.value);
+        if (sel.value) loadSplitTable(sel.value);
       } else {
         splitPane.style.display = 'none';
       }
     }
-    
+
     async function loadSplitTable(tableName) {
       const content = document.getElementById('grid-split-content');
       content.innerHTML = '<div class="empty"><div class="dot loading"></div></div>';
@@ -1275,12 +2581,12 @@
         const res = await S.conn.query(`SELECT * FROM "${tableName}" LIMIT 100`);
         const rows = res.toArray().map(r => r.toJSON ? r.toJSON() : Object.fromEntries(r));
         const cols = res.schema.fields.map(f => ({ name: f.name, type: String(f.type) }));
-        
-        const thead = `<thead><tr><th class="rn">#</th>${cols.filter(c=>c.name!=='__rowid').map(c => `<th style="padding:8px 12px; font-weight:600; color:var(--text2)">${escH(c.name)}</th>`).join('')}</tr></thead>`;
-        const tbody = `<tbody>${rows.map((r, i) => `<tr><td class="rn">${i + 1}</td>${cols.filter(c=>c.name!=='__rowid').map(c => `<td>${r[c.name] == null ? '' : escH(r[c.name])}</td>`).join('')}</tr>`).join('')}</tbody>`;
-        
+
+        const thead = `<thead><tr><th class="rn">#</th>${cols.filter(c => c.name !== '__rowid').map(c => `<th style="padding:8px 12px; font-weight:600; color:var(--text2)">${escH(c.name)}</th>`).join('')}</tr></thead>`;
+        const tbody = `<tbody>${rows.map((r, i) => `<tr><td class="rn">${i + 1}</td>${cols.filter(c => c.name !== '__rowid').map(c => `<td>${r[c.name] == null ? '' : escH(r[c.name])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+
         content.innerHTML = `<table class="sheet">${thead}${tbody}</table>`;
-      } catch(e) { content.innerHTML = `<div class="empty" style="color:red">Error: ${e.message}</div>`; }
+      } catch (e) { content.innerHTML = `<div class="empty" style="color:red">Error: ${e.message}</div>`; }
     }
 
     // ══════════════════════════════════════
@@ -1290,7 +2596,7 @@
       const cols = S.cols.filter(c => c.name !== '__rowid');
       document.getElementById('diag-sidebar').innerHTML = cols.map(c => `
         <div class="diag-col-item" onclick="loadDiagnostics('${escA(c.name)}')">
-          <div class="diag-col-name"><span class="material-icons" style="font-size:16px; color:var(--primary)">${isNumericCol(c.name)?'tag':'text_fields'}</span> ${escH(c.name)}</div>
+          <div class="diag-col-name"><span class="material-icons" style="font-size:16px; color:var(--primary)">${isNumericCol(c.name) ? 'tag' : 'text_fields'}</span> ${escH(c.name)}</div>
           <div class="diag-col-type">${c.type}</div>
         </div>
       `).join('');
@@ -1299,30 +2605,30 @@
     async function loadDiagnostics(col) {
       document.querySelectorAll('.diag-col-item').forEach(el => el.classList.remove('active'));
       event.currentTarget.classList.add('active');
-      
+
       const content = document.getElementById('diag-content');
       content.innerHTML = `<div class="empty"><div class="dot loading"></div><p>Analyzing ${col}...</p></div>`;
-      
+
       try {
         const res = await S.conn.query(`SELECT COUNT(*) as tot, COUNT("${col}") as non_null, COUNT(DISTINCT "${col}") as dist FROM (${S.sql}) AS t`);
         const stats = res.toArray()[0];
         const topRes = await S.conn.query(`SELECT "${col}" AS val, COUNT(*) as cnt FROM (${S.sql}) AS t GROUP BY "${col}" ORDER BY cnt DESC LIMIT 10`);
         const topData = topRes.toArray();
-        
+
         const maxCnt = Math.max(...topData.map(d => Number(d.cnt)));
-        
+
         content.innerHTML = `
           <h2 style="margin-bottom:20px; color:var(--text); font-size:20px;">Analysis: <span style="color:var(--primary)">${escH(col)}</span></h2>
           <div class="diag-cards">
             <div class="diag-card">
               <div class="diag-card-title"><span class="material-icons" style="color:var(--primary)">layers</span> Distinct Values</div>
               <div class="diag-card-val">${Number(stats.dist).toLocaleString()}</div>
-              <div style="font-size:12px; color:var(--text3); margin-top:8px">${((Number(stats.dist)/Number(stats.tot))*100).toFixed(1)}% unique</div>
+              <div style="font-size:12px; color:var(--text3); margin-top:8px">${((Number(stats.dist) / Number(stats.tot)) * 100).toFixed(1)}% unique</div>
             </div>
             <div class="diag-card">
               <div class="diag-card-title"><span class="material-icons" style="color:var(--red)">error_outline</span> Null Values</div>
               <div class="diag-card-val">${(Number(stats.tot) - Number(stats.non_null)).toLocaleString()}</div>
-              <div style="font-size:12px; color:var(--text3); margin-top:8px">${(((Number(stats.tot) - Number(stats.non_null))/Number(stats.tot))*100).toFixed(1)}% null</div>
+              <div style="font-size:12px; color:var(--text3); margin-top:8px">${(((Number(stats.tot) - Number(stats.non_null)) / Number(stats.tot)) * 100).toFixed(1)}% null</div>
             </div>
           </div>
           
@@ -1335,10 +2641,10 @@
                   <tr>
                     <td style="font-weight:500; color:var(--text2)">${r.val == null ? '<i>NULL</i>' : escH(r.val)}</td>
                     <td class="bar-cell">
-                      <div class="bar" style="width: ${maxCnt>0?(Number(r.cnt)/maxCnt)*100:0}%"></div>
+                      <div class="bar" style="width: ${maxCnt > 0 ? (Number(r.cnt) / maxCnt) * 100 : 0}%"></div>
                       <span class="bar-val">${Number(r.cnt).toLocaleString()}</span>
                     </td>
-                    <td style="text-align:right; font-size:11px; color:var(--text3)">${((Number(r.cnt)/Number(stats.tot))*100).toFixed(1)}%</td>
+                    <td style="text-align:right; font-size:11px; color:var(--text3)">${((Number(r.cnt) / Number(stats.tot)) * 100).toFixed(1)}%</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -1350,19 +2656,19 @@
             <div style="height:250px; position:relative;"><canvas id="diag-chart"></canvas></div>
           </div>
         `;
-        
+
         // Render Chart
         const canvas = document.getElementById('diag-chart');
-        new Chart(canvas.getContext('2d'), { 
-          type: 'bar', 
-          data: { 
-            labels: topData.map(d=>String(d.val)), 
-            datasets: [{ data: topData.map(d=>Number(d.cnt)), backgroundColor: '#0EA5E9', borderRadius: 4 }] 
-          }, 
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } 
+        new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: topData.map(d => String(d.val)),
+            datasets: [{ data: topData.map(d => Number(d.cnt)), backgroundColor: '#0EA5E9', borderRadius: 4 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
-        
-      } catch(e) { content.innerHTML = `<div class="empty" style="color:red">Error analyzing column: ${e.message}</div>`; }
+
+      } catch (e) { content.innerHTML = `<div class="empty" style="color:red">Error analyzing column: ${e.message}</div>`; }
     }
 
     // ══════════════════════════════════════
@@ -1373,16 +2679,16 @@
       document.getElementById('tab-grid').classList.toggle('active', mode === 'grid');
       document.getElementById('tab-diag').classList.toggle('active', mode === 'diagnostics');
       document.getElementById('tab-dash').classList.toggle('active', mode === 'dashboard');
-      
+
       document.getElementById('grid-wrap').classList.toggle('active', mode === 'grid');
       document.getElementById('diag-wrap').classList.toggle('active', mode === 'diagnostics');
       document.getElementById('dashboard-wrap').classList.toggle('active', mode === 'dashboard');
-      
+
       document.getElementById('pag').style.display = (mode === 'grid' && S.rows.length) ? 'flex' : 'none';
-      
+
       if (mode === 'dashboard') renderDashboard();
       if (mode === 'diagnostics' && !document.querySelector('.diag-col-item.active')) {
-         renderDiagnosticsSidebar();
+        renderDiagnosticsSidebar();
       }
     }
 
@@ -1397,7 +2703,7 @@
       if (!rows.length || !col || !val) return toast('Select rows, column, and measure', 'error');
       if (!isNumericCol(val) && (agg === 'SUM' || agg === 'AVG')) return toast(`Cannot ${agg} a non-numeric column`, 'error');
       closeD('dlg-pivot');
-      runQ(`PIVOT (${S.sql}) ON "${col}" USING ${agg}("${val}") GROUP BY ${rows.map(r=>`"${r}"`).join(', ')} ORDER BY "${rows[0]}"`);
+      runQ(`PIVOT (${S.sql}) ON "${col}" USING ${agg}("${val}") GROUP BY ${rows.map(r => `"${r}"`).join(', ')} ORDER BY "${rows[0]}"`);
     }
 
     // Chart Widget Builder
@@ -1405,7 +2711,7 @@
       closeAllDD();
       document.getElementById('ch-edit-id').value = editId || '';
       document.getElementById('ch-dlg-title').textContent = editId ? 'Edit Chart Widget' : 'Create Chart Widget';
-      
+
       if (editId) {
         const w = S.widgets.find(x => x.id === editId);
         if (w) {
@@ -1434,11 +2740,11 @@
       const title = document.getElementById('ch-title').value;
       const type = document.getElementById('ch-type').value;
       const isCustom = document.getElementById('ch-custom-sql-toggle').checked;
-      
+
       let sql = '';
       if (isCustom) {
         sql = document.getElementById('ch-sql').value.trim();
-        if(!sql) return toast('Enter SQL query', 'error');
+        if (!sql) return toast('Enter SQL query', 'error');
       } else {
         const x = document.getElementById('ch-x').value, y = document.getElementById('ch-y').value, agg = document.getElementById('ch-agg').value;
         if (!x || !y) return toast('Select axes', 'error');
@@ -1450,9 +2756,9 @@
         const w = S.widgets.find(x => x.id === editId);
         if (w) { w.title = title; w.chartType = type; w.sql = sql; }
       } else {
-        S.widgets.push({ id: 'w_'+Date.now(), type: 'chart', title, chartType: type, sql });
+        S.widgets.push({ id: 'w_' + Date.now(), type: 'chart', title, chartType: type, sql });
       }
-      
+
       closeD('dlg-chart'); switchView('dashboard'); toast(editId ? 'Widget updated' : 'Widget added');
     }
 
@@ -1482,41 +2788,41 @@
           </div>
           <div class="widget-body" id="${w.id}"></div>`;
         grid.appendChild(wrap);
-        
+
         try {
           const res = await S.conn.query(w.sql);
           const data = res.toArray().map(r => r.toJSON ? r.toJSON() : Object.fromEntries(r));
           if (w.type === 'chart') renderChartWidget(w.id, data, w.chartType);
           else if (w.type === 'leaderboard') renderLeaderboardWidget(w.id, data);
-        } catch(e) { document.getElementById(w.id).innerHTML = `<div style="color:red; font-size:12px; padding:12px;">Error: ${e.message}</div>`; }
+        } catch (e) { document.getElementById(w.id).innerHTML = `<div style="color:red; font-size:12px; padding:12px;">Error: ${e.message}</div>`; }
       }
     }
 
     function renderChartWidget(id, data, type) {
-      if(!data || !data.length) { document.getElementById(id).innerHTML = '<div class="empty" style="padding:10px">No data</div>'; return; }
-      
+      if (!data || !data.length) { document.getElementById(id).innerHTML = '<div class="empty" style="padding:10px">No data</div>'; return; }
+
       // Fallback if AI doesn't use label/val aliases
       const keys = Object.keys(data[0]);
       const lKey = keys.includes('label') ? 'label' : keys[0];
       const vKey = keys.includes('val') ? 'val' : (keys[1] || keys[0]);
 
       const canvas = document.createElement('canvas'); document.getElementById(id).appendChild(canvas);
-      
+
       // Generate colors for pie/doughnut/polar
       const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#84CC16'];
-      const bgColors = type === 'line' ? 'rgba(14, 165, 233, 0.1)' : (type === 'bar' ? '#0EA5E9' : data.map((_,i) => colors[i%colors.length]));
+      const bgColors = type === 'line' ? 'rgba(14, 165, 233, 0.1)' : (type === 'bar' ? '#0EA5E9' : data.map((_, i) => colors[i % colors.length]));
 
-      new Chart(canvas.getContext('2d'), { 
-        type, 
-        data: { 
-          labels: data.map(d=>String(d[lKey])), 
-          datasets: [{ data: data.map(d=>Number(d[vKey])), backgroundColor: bgColors, borderColor: type==='line'?'#0EA5E9':'#fff', borderWidth: type==='line'?2:1, fill: type==='line', tension: 0.3 }] 
-        }, 
-        options: { 
-          responsive: true, maintainAspectRatio: false, 
-          plugins: { legend: { display: ['pie','doughnut','polarArea'].includes(type), position: 'right' } }, 
-          scales: ['pie','doughnut','polarArea','radar'].includes(type) ? {} : {x:{display:false},y:{beginAtZero:true}} 
-        } 
+      new Chart(canvas.getContext('2d'), {
+        type,
+        data: {
+          labels: data.map(d => String(d[lKey])),
+          datasets: [{ data: data.map(d => Number(d[vKey])), backgroundColor: bgColors, borderColor: type === 'line' ? '#0EA5E9' : '#fff', borderWidth: type === 'line' ? 2 : 1, fill: type === 'line', tension: 0.3 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: ['pie', 'doughnut', 'polarArea'].includes(type), position: 'right' } },
+          scales: ['pie', 'doughnut', 'polarArea', 'radar'].includes(type) ? {} : { x: { display: false }, y: { beginAtZero: true } }
+        }
       });
     }
 
@@ -1527,7 +2833,7 @@
       const vKey = keys.includes('val') ? 'val' : (keys[1] || keys[0]);
 
       const maxVal = Math.max(...data.map(d => Number(d[vKey])));
-      document.getElementById(id).innerHTML = `<table class="leaderboard"><thead><tr><th>Dimension</th><th style="text-align:right">Value</th></tr></thead><tbody>${data.map(d => `<tr><td style="font-weight:500; color:var(--text2)">${escH(d[lKey])}</td><td class="bar-cell"><div class="bar" style="width: ${maxVal>0?(Number(d[vKey])/maxVal)*100:0}%"></div><span class="bar-val">${Number(d[vKey]).toLocaleString(undefined,{maximumFractionDigits:1})}</span></td></tr>`).join('')}</tbody></table>`;
+      document.getElementById(id).innerHTML = `<table class="leaderboard"><thead><tr><th>Dimension</th><th style="text-align:right">Value</th></tr></thead><tbody>${data.map(d => `<tr><td style="font-weight:500; color:var(--text2)">${escH(d[lKey])}</td><td class="bar-cell"><div class="bar" style="width: ${maxVal > 0 ? (Number(d[vKey]) / maxVal) * 100 : 0}%"></div><span class="bar-val">${Number(d[vKey]).toLocaleString(undefined, { maximumFractionDigits: 1 })}</span></td></tr>`).join('')}</tbody></table>`;
     }
     function removeWidget(id) { S.widgets = S.widgets.filter(w => w.id !== id); renderDashboard(); }
 
@@ -1545,10 +2851,10 @@
         const res = await fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': `Bearer ${key}` } });
         if (res.ok) {
           const data = await res.json();
-          const models = data.data.filter(m => m.id.includes('llama') || m.id.includes('mixtral')).sort((a,b) => a.id.localeCompare(b.id));
+          const models = data.data.filter(m => m.id.includes('llama') || m.id.includes('mixtral')).sort((a, b) => a.id.localeCompare(b.id));
           if (models.length > 0) select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
         }
-      } catch(e) {}
+      } catch (e) { }
     }
 
     function saveGroqSettings() {
@@ -1565,46 +2871,46 @@
     async function sendChat() {
       const key = localStorage.getItem('groq_key');
       if (!key) return openD('dlg-groq');
-      
+
       const input = document.getElementById('chat-input');
       const msg = input.value.trim(); if (!msg) return;
       input.value = '';
-      
+
       appendChat('user', msg);
-      
-      const schema = Object.entries(S.tables).map(([n,t]) => `Table "${n}": ${t.cols.map(c=>c.name).join(', ')}`).join('\n');
+
+      const schema = Object.entries(S.tables).map(([n, t]) => `Table "${n}": ${t.cols.map(c => c.name).join(', ')}`).join('\n');
       const system = `You are a DuckDB SQL expert. Output ONLY valid DuckDB SQL inside \`\`\`sql blocks. No markdown outside of it unless absolutely necessary. Do not include trailing semicolons in the SQL block. 
       CRITICAL: If the user asks to create a chart or visualize data, output a SQL query that returns exactly two columns: one for the category/x-axis aliased exactly as "label", and one for the numeric value/y-axis aliased exactly as "val". Example: SELECT category AS label, SUM(sales) AS val FROM...
       Schema:\n${schema}`;
-      
-      S.chatHist.push({role: 'user', content: msg});
-      
+
+      S.chatHist.push({ role: 'user', content: msg });
+
       document.getElementById('chat-send-btn').disabled = true;
       try {
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{role:'system', content:system}, ...S.chatHist], temperature: 0.1 })
+          body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{ role: 'system', content: system }, ...S.chatHist], temperature: 0.1 })
         });
         if (!res.ok) throw new Error(await res.text());
         const data = await res.json();
         const reply = data.choices[0].message.content;
-        S.chatHist.push({role: 'assistant', content: reply});
-        
+        S.chatHist.push({ role: 'assistant', content: reply });
+
         // Check if user requested a chart
         const isChartReq = /chart|visualize|plot|graph/i.test(msg);
         const match = reply.match(/```(?:sql)?\n?([\s\S]+?)```/i);
-        
-        if(isChartReq && match) {
-           const sql = match[1].trim();
-           S.widgets.push({ id: 'w_'+Date.now(), type: 'chart', title: 'AI Generated Chart', chartType: 'bar', sql: sql });
-           switchView('dashboard');
-           toast('Chart created from AI');
-           appendChat('ai', "I've created the chart and added it to your dashboard!");
+
+        if (isChartReq && match) {
+          const sql = match[1].trim();
+          S.widgets.push({ id: 'w_' + Date.now(), type: 'chart', title: 'AI Generated Chart', chartType: 'bar', sql: sql });
+          switchView('dashboard');
+          toast('Chart created from AI');
+          appendChat('ai', "I've created the chart and added it to your dashboard!");
         } else {
-           appendChat('ai', reply);
+          appendChat('ai', reply);
         }
-      } catch(e) { appendChat('ai', `Error: ${e.message}`); }
+      } catch (e) { appendChat('ai', `Error: ${e.message}`); }
       finally { document.getElementById('chat-send-btn').disabled = false; }
     }
 
@@ -1619,7 +2925,44 @@
     function applyAISQL(btn) {
       const sql = btn.getAttribute('data-sql');
       runQ(sql);
-      if(window.innerWidth <= 768) toggleChat();
+      if (window.innerWidth <= 768) toggleChat();
+    }
+
+    async function renderSidebar() {
+      document.getElementById('table-list').innerHTML = Object.entries(S.tables).map(([n, t]) => `
+        <div class="ti ${n === S.active ? 'active' : ''}" onclick="setActive('${esc(n)}')">
+          <span class="material-icons" style="font-size:18px;color:var(--text3)">table_chart</span>
+          <div class="ti-info"><div class="ti-name">${escH(n)}</div><div class="ti-meta">${t.rowCount.toLocaleString()} rows</div></div>
+          <div class="ti-acts" onclick="event.stopPropagation()">
+            <button class="ti-act-btn" title="Refresh row count" onclick="refreshTableCount('${esc(n)}')"><span class="material-icons">refresh</span></button>
+            <button class="ti-act-btn ti-act-del" title="Delete table" onclick="deleteTable('${esc(n)}')"><span class="material-icons">delete_outline</span></button>
+          </div>
+        </div>`).join('');
+    }
+
+    async function refreshTableCount(name) {
+      try {
+        const cr = await S.conn.query(`SELECT COUNT(*) AS n FROM "${name}"`);
+        if (S.tables[name]) S.tables[name].rowCount = Number(cr.toArray()[0].n);
+        renderSidebar();
+        toast(`Refreshed ${name}`);
+      } catch (e) { toast('Refresh failed: ' + e.message, 'error'); }
+    }
+
+    async function deleteTable(name) {
+      if (!confirm(`Delete table "${name}"?\n\nThis cannot be undone.`)) return;
+      try {
+        await S.conn.query(`DROP TABLE IF EXISTS "${name}"`);
+        delete S.tables[name];
+        if (S.active === name) {
+          S.active = null; S.rows = []; S.cols = []; S.sql = '';
+          document.getElementById('grid').innerHTML = '<div class="empty"><span class="material-icons">grid_on</span><h3>No data loaded</h3><p>Upload a file or load demo data to get started.</p></div>';
+          document.getElementById('pag').style.display = 'none';
+          updateSB('—');
+        }
+        renderSidebar();
+        toast(`Deleted ${name}`);
+      } catch (e) { toast('Delete failed: ' + e.message, 'error'); }
     }
 
     async function fixSQLError() {
@@ -1627,15 +2970,15 @@
       if (!key) return openD('dlg-groq');
       const badSql = document.getElementById('sql-editor').value;
       const errorMsg = document.getElementById('sql-error-msg').textContent;
-      
-      const schema = Object.entries(S.tables).map(([n,t]) => `Table "${n}": ${t.cols.map(c=>c.name).join(', ')}`).join('\n');
+
+      const schema = Object.entries(S.tables).map(([n, t]) => `Table "${n}": ${t.cols.map(c => c.name).join(', ')}`).join('\n');
       const prompt = `Fix this DuckDB SQL query. \nQuery: ${badSql}\nError: ${errorMsg}\nSchema:\n${schema}\nReturn ONLY the fixed SQL in a \`\`\`sql block.`;
-      
+
       try {
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{role:'user', content:prompt}], temperature: 0.1 })
+          body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{ role: 'user', content: prompt }], temperature: 0.1 })
         });
         if (!res.ok) throw new Error('API Error');
         const data = await res.json();
@@ -1645,36 +2988,42 @@
           document.getElementById('sql-editor').value = match[1].trim();
           document.getElementById('run-btn').click();
         } else toast('Could not parse fix', 'error');
-      } catch(e) { toast('Auto-fix failed', 'error'); }
+      } catch (e) { toast('Auto-fix failed', 'error'); }
     }
 
     // ══════════════════════════════════════
     // UI HELPERS & DIALOGS
     // ══════════════════════════════════════
     function renderSidebar() {
-      document.getElementById('table-list').innerHTML = Object.entries(S.tables).map(([n, t]) => `
-        <div class="ti ${n === S.active ? 'active' : ''}" onclick="setActive('${esc(n)}')">
-          <span class="material-icons">table_chart</span>
+
+      document.getElementById('table-list').innerHTML = Object.entries(S.tables).map(([n, t]) => `      
+      <div class="ti ${n === S.active ? 'active' : ''}" onclick="setActive('${esc(n)}')">
+          <span class="material-icons" style="font-size:18px;color:var(--text3)">table_chart</span>
           <div class="ti-info"><div class="ti-name">${escH(n)}</div><div class="ti-meta">${t.rowCount.toLocaleString()} rows</div></div>
+          <div class="ti-acts" onclick="event.stopPropagation()">
+            <button class="ti-act-btn" title="Refresh row count" onclick="refreshTableCount('${esc(n)}')"><span class="material-icons">refresh</span></button>
+            <button class="ti-act-btn ti-act-del" title="Delete table" onclick="deleteTable('${esc(n)}')"><span class="material-icons">delete_outline</span></button>
+          </div>
         </div>`).join('');
+
     }
 
     function openD(id) {
       fillSelects(); document.getElementById(id).classList.add('open'); closeAllDD();
-      if(id === 'dlg-join') {
-        document.getElementById('j-lt').innerHTML = Object.keys(S.tables).map(t=>`<option>${t}</option>`).join('');
-        document.getElementById('j-rt').innerHTML = Object.keys(S.tables).map(t=>`<option>${t}</option>`).join('');
+      if (id === 'dlg-join') {
+        document.getElementById('j-lt').innerHTML = Object.keys(S.tables).map(t => `<option>${t}</option>`).join('');
+        document.getElementById('j-rt').innerHTML = Object.keys(S.tables).map(t => `<option>${t}</option>`).join('');
         updateJoinCols();
       }
-      if(id === 'dlg-groq') loadGroqModels();
+      if (id === 'dlg-groq') loadGroqModels();
     }
     function closeD(id) { document.getElementById(id).classList.remove('open'); }
-    
+
     function fillSelects() {
       const cols = S.active ? (S.tables[S.active]?.cols || S.cols) : S.cols;
       const cleanCols = cols.filter(c => c.name !== '__rowid');
       const allOpts = cleanCols.map(c => `<option value="${escA(c.name)}">${escH(c.name)}</option>`).join('');
-      
+
       ['s-col', 'cl-cols', 'g-cols', 'g-val', 'ga-val', 'dd-cols', 'pv-rows', 'pv-col', 'pv-val', 'ch-x', 'ch-y', 'ad-metric', 'ad-dims'].forEach(id => {
         const el = document.getElementById(id); if (el) el.innerHTML = allOpts;
       });
@@ -1692,15 +3041,15 @@
       const sb = document.getElementById('sidebar');
       sb.classList.toggle('collapsed');
     }
-    function toggleSidebar() { 
-      document.getElementById('sidebar').classList.toggle('open'); 
-      if(window.innerWidth <= 768) document.getElementById('mobile-backdrop').classList.toggle('open'); 
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      if (window.innerWidth <= 768) document.getElementById('mobile-backdrop').classList.toggle('open');
     }
-    function toggleChat() { 
+    function toggleChat() {
       const chat = document.getElementById('chat');
       chat.classList.toggle('collapsed');
-      chat.classList.toggle('open'); 
-      if(window.innerWidth <= 768) document.getElementById('mobile-backdrop').classList.toggle('open'); 
+      chat.classList.toggle('open');
+      if (window.innerWidth <= 768) document.getElementById('mobile-backdrop').classList.toggle('open');
     }
     function closeMobilePanels() {
       document.getElementById('sidebar').classList.remove('open');
@@ -1725,19 +3074,19 @@
     function setStatus(s, t) { document.getElementById('status-dot').className = 'dot ' + s; document.getElementById('status-text').textContent = t; }
     function toast(msg, type = '') {
       const el = document.createElement('div'); el.className = 'snack ' + type;
-      el.innerHTML = `<span class="material-icons">${type==='error'?'error':'check_circle'}</span> ${msg}`;
+      el.innerHTML = `<span class="material-icons">${type === 'error' ? 'error' : 'check_circle'}</span> ${msg}`;
       document.getElementById('toasts').appendChild(el); setTimeout(() => el.remove(), 3000);
     }
     function updateSB(ms) {
       document.getElementById('sb-rows').innerHTML = `Rows: <b>${S.total.toLocaleString()}</b>`;
-      document.getElementById('sb-cols').innerHTML = `Cols: <b>${S.cols.filter(c=>c.name!=='__rowid').length}</b>`;
+      document.getElementById('sb-cols').innerHTML = `Cols: <b>${S.cols.filter(c => c.name !== '__rowid').length}</b>`;
       document.getElementById('sb-time').innerHTML = `Time: <b>${ms}ms</b>`;
       document.getElementById('sb-tbl').innerHTML = `Table: <b>${S.active || '—'}</b>`;
     }
     function escH(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function escA(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     function esc(s) { return String(s).replace(/'/g, "\\'"); }
-    function shortType(t) { t = (t||'').toUpperCase(); if(/INT|BIGINT/.test(t)) return 'INT'; if(/DOUBLE|FLOAT|DECIMAL/.test(t)) return 'NUM'; if(/VARCHAR|STRING/.test(t)) return 'STR'; return t.slice(0,4); }
+    function shortType(t) { t = (t || '').toUpperCase(); if (/INT|BIGINT/.test(t)) return 'INT'; if (/DOUBLE|FLOAT|DECIMAL/.test(t)) return 'NUM'; if (/VARCHAR|STRING/.test(t)) return 'STR'; return t.slice(0, 4); }
 
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.key === 'z') { e.preventDefault(); History.undo(); }
@@ -1747,5 +3096,246 @@
 
     document.addEventListener('DOMContentLoaded', initDuckDB);
   </script>
+
+  <!-- ════════════════════════════════════════════════════════
+       DRIVER.JS GUIDED TOUR  v2
+       • Loads demo data before tour, drops it after
+       • Shows live Diagnostics + Dashboard mid-tour
+       • First-visit auto-start; ? button always re-runs
+  ═════════════════════════════════════════════════════════ -->
+  <script>
+    (function () {
+      var TOUR_TABLE = '__tour_demo';
+      var driverInstance = null;
+
+      /* ── Utility ── */
+      function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+      /* ── Load temporary demo dataset ── */
+      async function loadTourData() {
+        if (!S.conn) return;
+        try {
+          await S.conn.query(
+            'CREATE OR REPLACE TABLE "' + TOUR_TABLE + '" AS' +
+            ' SELECT row_number() OVER () as __rowid,' +
+            ' [\'instacart.com\',\'leafly.ca\',\'hyundaiusa.com\',\'amgen.com\',\'bacardi.com\'][1+(i%5)] AS domain,' +
+            ' [\'Instacart\',\'Leafly\',\'Hyundai\',\'Amgen Inc\',\'Bacardi\'][1+(i%5)] AS advertiser,' +
+            ' [\'Android\',\'iOS\',\'Windows\',\'OS X\'][1+(i%4)] AS device_os,' +
+            ' [\'Mobile\',\'Tablet\',\'Desktop\'][1+(i%3)] AS device_type,' +
+            ' [\'USA/OH\',\'USA/CA\',\'USA/TX\',\'USA/NY\'][1+(i%4)] AS region,' +
+            ' [\'VIDEO\',\'BANNER\',\'NATIVE\'][1+(i%3)] AS creative_type,' +
+            ' ROUND(random()*50, 2) AS spend,' +
+            ' CAST((random()*1000) AS INT) AS impressions,' +
+            ' ROUND(random(), 3) AS ctr' +
+            ' FROM range(1, 501) t(i)'
+          );
+          await refreshTables();
+          setActive(TOUR_TABLE);
+          await sleep(400);
+        } catch (e) { console.warn('Tour data load failed', e); }
+      }
+
+      /* ── Drop temporary tour data ── */
+      async function dropTourData() {
+        if (!S.conn) return;
+        try {
+          await S.conn.query('DROP TABLE IF EXISTS "' + TOUR_TABLE + '"');
+          delete S.tables[TOUR_TABLE];
+          if (S.active === TOUR_TABLE) {
+            var remaining = Object.keys(S.tables);
+            if (remaining.length) {
+              setActive(remaining[0]);
+            } else {
+              S.active = null; S.rows = []; S.cols = []; S.sql = '';
+              document.getElementById('grid').innerHTML =
+                '<div class="empty"><span class="material-icons">grid_on</span><h3>No data loaded</h3><p>Upload a file or load demo data to get started.</p><button class="btn btn-o" onclick="loadDemo()" style="margin-top:12px"><span class="material-icons">science</span> Load Demo Data</button></div>';
+              document.getElementById('pag').style.display = 'none';
+              updateSB('\u2014');
+            }
+          }
+          renderSidebar();
+        } catch (e) { console.warn('Tour data cleanup failed', e); }
+      }
+
+      /* ── Cleanup on any exit ── */
+      async function tourCleanup(state) {
+        switchView(state.originalView || 'grid');
+        if (!state.sqlWasOpen) document.getElementById('sql-panel').classList.remove('open');
+        document.getElementById('pag').style.display = state.pagOrigDisplay;
+        if (state.chatWasCollapsed) {
+          var chat = document.getElementById('chat');
+          chat.classList.add('collapsed');
+          chat.classList.remove('open');
+        }
+        if (state.tourWidgetsAdded) {
+          S.widgets = S.widgets.filter(function (w) { return !w._tw; });
+          renderDashboard();
+        }
+        await dropTourData();
+      }
+
+      /* ── Tour steps ── */
+      function buildSteps() {
+        return [
+          /* 0 */
+          { popover: { title: '\uD83D\uDC4B Welcome to Xelquanta Lab!', description: 'This guided tour walks through every feature. We\'ve loaded a live sample dataset so you can see everything in action. Click <b>Next \u2192</b> to begin, or press <b>ESC</b> to skip.' } },
+          /* 1 */
+          { element: '.app-logo', popover: { title: '\uD83D\uDD37 Xelquanta Lab', description: 'The DuckDB-WASM analytics engine runs entirely in your browser \u2014 no server, no installation. All data stays local on your machine.' } },
+          /* 2 */
+          { element: '.app-bar .tbb:first-child', popover: { title: '\u2630 Toggle Sidebar', description: 'Click this <b>hamburger button</b> to collapse or expand the left \u201cTables\u201d panel. Great when you need more grid space.' } },
+          /* 3 */
+          { element: '.view-tabs', popover: { title: '\uD83D\uDCD0 View Switcher', description: 'Three main views:<br><b>Grid</b> \u2014 spreadsheet data table<br><b>Diagnostics</b> \u2014 column profiling &amp; distribution charts<br><b>Dashboard</b> \u2014 interactive chart widgets' } },
+          /* 4 */
+          { element: '.status-chip', popover: { title: '\uD83D\uDFE2 Engine Status', description: '<b>Yellow blinking</b> = loading / processing<br><b>Green</b> = ready<br><b>Red</b> = error (check SQL panel)' } },
+          /* 5 */
+          { element: '#tour-help-btn', popover: { title: '\u2753 Restart Tour', description: 'Click the <b>?</b> circle at any time to replay this full guided tour from the beginning.' } },
+          /* 6 */
+          { element: '#dd-file', popover: { title: '\uD83D\uDCC2 File Menu', description: '• <b>Upload file\u2026</b> \u2014 import CSV, JSON, or Parquet<br>• <b>Load demo data</b> \u2014 instant 500-row ad-bids dataset<br>• <b>Export as CSV / JSON / Parquet / HTML Table</b>' } },
+          /* 7 */
+          { element: '#dd-edit', popover: { title: '\u270F\uFE0F Edit Menu', description: '<b>Undo</b> \u2014 revert last transformation or cell edit (<code>Ctrl+Z</code>)<br><b>Redo</b> \u2014 re-apply undone action (<code>Ctrl+Y</code>)' } },
+          /* 8 */
+          { element: '#dd-data', popover: { title: '\uD83D\uDDC3\uFE0F Data Menu', description: '• <b>Filter\u2026</b> \u2014 multi-condition WHERE<br>• <b>Sort\u2026</b> \u2014 single-column<br>• <b>Cluster / Order By\u2026</b> \u2014 multi-column<br>• <b>Group By &amp; Aggregate\u2026</b> \u2014 COUNT/SUM/AVG/MAX/MIN<br>• <b>Global Aggregation\u2026</b> \u2014 single scalar<br>• <b>Join Tables\u2026</b> \u2014 INNER or LEFT JOIN<br>• <b>Pivot Builder\u2026</b> \u2014 reshape to pivot table<br>• <b>Remove Duplicates\u2026</b> \u2014 DISTINCT ON columns' } },
+          /* 9 */
+          { element: '#dd-dash', popover: { title: '\uD83D\uDCCA Dashboards Menu', description: '• <b>Create Chart Widget</b> \u2014 bar, line, pie, doughnut, polar, radar<br>• <b>Auto-Dashboard</b> \u2014 auto-generate charts from a metric &amp; dimensions' } },
+          /* 10 */
+          { element: '#dd-ai', popover: { title: '\uD83E\uDD16 AI Settings', description: 'Paste your free <b>Groq API key</b> and choose an LLM (Llama 3, Mixtral \u2026) to power the AI SQL assistant.' } },
+          /* 11 */
+          { element: '#btn-undo', popover: { title: '\u21A9 Undo', description: 'Reverts the last data transformation or cell edit. Greyed out when history is empty. Shortcut: <code>Ctrl+Z</code>.' } },
+          /* 12 */
+          { element: '#btn-redo', popover: { title: '\u21AA Redo', description: 'Re-applies the most recently undone action. Shortcut: <code>Ctrl+Y</code>.' } },
+          /* 13 */
+          { element: '.tbt[title="History"]', popover: { title: '\uD83D\uDD51 History Browser', description: 'Opens a dialog with the full audit trail of SQL queries and cell edits. Current query is highlighted in blue.' } },
+          /* 14 */
+          { element: '.tbt[title="Compare Tables"]', popover: { title: '\u23E9 Compare / Split View', description: 'Opens a side-by-side pane. Choose a second table from the dropdown to compare datasets. Click again or press \u00D7 to close.' } },
+          /* 15 */
+          { element: '.tbb[title="Toggle SQL Editor"]', popover: { title: '\uD83D\uDCBB SQL Editor Toggle', description: 'Show/hide the SQL editor. Write any DuckDB SQL \u2014 SELECT, JOIN, CREATE TABLE, PIVOT \u2014 and click <b>Run</b>.' } },
+          /* 16 */
+          { element: '.tbb[title="AI Assistant"]', popover: { title: '\uD83E\uDD16 AI Assistant Toggle', description: 'Opens the Groq AI chat panel. Ask in plain English \u2014 the AI writes SQL, explains results, fixes errors, and builds charts.' } },
+          /* 17 */
+          { element: '#sidebar', popover: { title: '\uD83D\uDCCB Tables Panel', description: 'Every loaded file appears here as a named table. Click a name to make it active.<br><br>Each row has two action buttons (visible on hover):<br>\u2022 <b>\u27F3 Refresh</b> \u2014 re-count rows<br>\u2022 <b>\uD83D\uDDD1 Delete</b> \u2014 drop the table (asks for confirmation)' } },
+          /* 18 */
+          { element: '#upload-zone', popover: { title: '\uD83D\uDCE4 Upload / Drop Zone', description: '<b>Drag &amp; drop</b> a file here, or click to browse.<br>Supported: <b>CSV</b>, <b>JSON</b>, <b>Parquet</b><br>Each file becomes its own queryable table.' } },
+          /* 19 */
+          { element: '#grid-wrap', popover: { title: '\uD83D\uDCCA Data Grid \u2014 Live Data', description: 'Showing <b>500 rows</b> of the demo ad-bid dataset. Interactions:<br>\u2022 <b>Double-click a cell</b> \u2014 edit in-place<br>\u2022 <b>Drag a column header</b> \u2014 reorder columns<br>\u2022 <b>Drag the right edge of a header</b> \u2014 resize column' } },
+          /* 20 */
+          { popover: { title: '\u2699\uFE0F Column Header Options (\u22EE button)', description: 'Hover over any column header to reveal a <b>three-dot \u22EE button</b>. It opens:<br>\u2022 <b>Rename Column</b> \u2014 new alias via SELECT<br>\u2022 <b>Change Data Type</b> \u2014 CAST to INT, DOUBLE, VARCHAR\u2026<br>\u2022 <b>Create Formula Col</b> \u2014 e.g. <code>spend * 1.1</code> or <code>UPPER(name)</code><br>\u2022 <b>Hide Column</b> \u2014 exclude from view (data unchanged)' } },
+          /* 21 */
+          { popover: { title: '\u2194\uFE0F Rearrange Columns', description: 'Drag any column header left or right. A <b>blue highlight</b> shows the drop target. Tracked in History \u2014 Undo works.' } },
+          /* 22 */
+          { popover: { title: '\u2194 Resize Columns', description: 'Hover over the <b>right edge of a column header</b> until you see a resize cursor (\u2194), then drag. Min width: 50 px.' } },
+          /* 23 */
+          { element: '#sql-panel', popover: { title: '\uD83D\uDCBB SQL Editor Panel', description: '• <b>\u25B6 Run</b> \u2014 execute and refresh grid<br>• <b>Save as Table</b> \u2014 materialise result as new table<br>• <b>Auto-Fix</b> (on error) \u2014 AI corrects failing query<br>• <b>\u00D7 Close</b> \u2014 hide without losing your query' } },
+          /* 24 */
+          { element: '#pag', popover: { title: '\uD83D\uDCC4 Pagination Controls', description: '• <b>\u25C4 Prev / Next \u25BA</b> \u2014 navigate pages<br>• <b>Page X of Y</b> \u2014 current position<br>• <b>Rows-per-page</b> dropdown \u2014 50, 100, or 500 rows' } },
+          /* 25 */
+          { element: '.sb', popover: { title: '\uD83D\uDCCC Status Bar', description: 'Live query stats:<br>\u2022 <b>Rows</b> \u2014 total matching rows<br>\u2022 <b>Cols</b> \u2014 visible columns<br>\u2022 <b>Time</b> \u2014 query time in ms<br>\u2022 <b>Table</b> \u2014 active table name' } },
+          /* 26 — trigger switch to Diagnostics on next */
+          { element: '#tab-diag', popover: { title: '\uD83D\uDD2C Diagnostics View', description: 'Click <b>Next \u2192</b> to switch to the Diagnostics view and see a live column profile from our demo data.' } },
+          /* 27 — diagnostics sidebar */
+          { element: '#diag-sidebar', popover: { title: '\uD83D\uDD2C Column List', description: 'All columns are listed here. Click any column to profile it. Numeric columns include a bar-chart distribution; text columns show value frequency.' } },
+          /* 28 — diagnostics main content */
+          { element: '#diag-content', popover: { title: '\uD83D\uDCCA Live Column Profile', description: 'Showing a real profile of the <b>advertiser</b> column from the demo data:<br>\u2022 <b>Distinct values</b> count &amp; % unique<br>\u2022 <b>Null count</b> &amp; % null<br>\u2022 <b>Top 10 values</b> with inline bar leaderboard<br>\u2022 <b>Distribution</b> bar chart' } },
+          /* 29 — trigger switch to Dashboard on next */
+          { element: '#tab-dash', popover: { title: '\uD83D\uDCC8 Dashboard View', description: 'Click <b>Next \u2192</b> to switch to the Dashboard view and see auto-generated charts from our demo data.' } },
+          /* 30 — dashboard area */
+          { element: '#dashboard-wrap', popover: { title: '\uD83D\uDCCA Live Dashboard', description: 'Four auto-generated widgets are showing spend &amp; impressions breakdowns from the demo dataset:<br>\u2022 <b>Spend by Advertiser</b> \u2014 bar chart<br>\u2022 <b>Impressions by Region</b> \u2014 leaderboard<br>\u2022 <b>Spend by Device Type</b> \u2014 pie chart<br>\u2022 <b>Spend by Creative Type</b> \u2014 doughnut chart' } },
+          /* 31 — AI chat */
+          { element: '#chat', popover: { title: '\uD83E\uDD16 Groq AI Assistant', description: 'Talk to your data in plain English:<br>\u2022 <i>"Show top 5 advertisers by spend"</i><br>\u2022 <i>"Create a pie chart of device types"</i><br>\u2022 <i>"Fix my broken query"</i><br><br>Chat header: <b>\uD83D\uDDD1 Reset</b> clears history \u00B7 <b>\u2699 Settings</b> changes the key<br>AI replies with SQL have an <b>Apply SQL</b> button.' } },
+          /* 32 — Finish */
+          { popover: { title: '\uD83C\uDF89 You\'re all set!', description: 'The demo dataset will be removed now. Load your own data via <b>File \u2192 Upload file\u2026</b> or drag a CSV/JSON/Parquet into the sidebar.<br><br>Press <b>\u2713 Done</b> to close the tour!' } }
+        ];
+      }
+
+      /* ── Main: startTour ── */
+      async function startTour(force) {
+        if (!force && localStorage.getItem('xq_tour_seen')) return;
+
+        /* Capture state for cleanup */
+        var state = {
+          originalView: S.viewMode || 'grid',
+          sqlWasOpen: document.getElementById('sql-panel').classList.contains('open'),
+          pagOrigDisplay: document.getElementById('pag').style.display,
+          chatWasCollapsed: document.getElementById('chat').classList.contains('collapsed'),
+          tourWidgetsAdded: false
+        };
+
+        /* Load demo data */
+        await loadTourData();
+
+        /* Set up UI for tour */
+        switchView('grid');
+        document.getElementById('sql-panel').classList.add('open');
+        document.getElementById('pag').style.display = 'flex';
+        document.getElementById('chat').classList.remove('collapsed');
+
+        var driver = window.driver && window.driver.js && window.driver.js.driver;
+        if (!driver) { console.warn('Driver.js not loaded'); return; }
+
+        driverInstance = driver({
+          showProgress: true,
+          animate: true,
+          nextBtnText: 'Next \u2192',
+          prevBtnText: '\u2190 Back',
+          doneBtnText: '\u2713 Done',
+          allowClose: true,
+          overlayColor: 'rgba(17,24,39,0.65)',
+          steps: buildSteps(),
+
+          onNextClick: async function (el, step, opts) {
+            var idx = driverInstance.getActiveIndex();
+
+            /* Step 26 \u2192 27: switch to Diagnostics and auto-select first column */
+            if (idx === 26) {
+              switchView('diagnostics');
+              await sleep(350);
+              var firstItem = document.querySelector('.diag-col-item');
+              if (firstItem) { firstItem.click(); await sleep(700); }
+            }
+
+            /* Step 29 \u2192 30: switch to Dashboard and build demo widgets */
+            if (idx === 29) {
+              S.widgets = S.widgets.filter(function (w) { return !w._tw; });
+              [
+                { id: '_tw1', type: 'chart', title: 'Spend by Advertiser', chartType: 'bar', _tw: true, sql: 'SELECT advertiser AS label, ROUND(SUM(spend),1) AS val FROM "' + TOUR_TABLE + '" GROUP BY advertiser ORDER BY val DESC' },
+                { id: '_tw2', type: 'leaderboard', title: 'Impressions by Region', _tw: true, sql: 'SELECT region AS label, SUM(impressions) AS val FROM "' + TOUR_TABLE + '" GROUP BY region ORDER BY val DESC LIMIT 5' },
+                { id: '_tw3', type: 'chart', title: 'Spend by Device Type', chartType: 'pie', _tw: true, sql: 'SELECT device_type AS label, ROUND(SUM(spend),1) AS val FROM "' + TOUR_TABLE + '" GROUP BY device_type' },
+                { id: '_tw4', type: 'chart', title: 'Spend by Creative Type', chartType: 'doughnut', _tw: true, sql: 'SELECT creative_type AS label, ROUND(SUM(spend),1) AS val FROM "' + TOUR_TABLE + '" GROUP BY creative_type' }
+              ].forEach(function (w) { S.widgets.push(w); });
+              state.tourWidgetsAdded = true;
+              switchView('dashboard');
+              await sleep(500);
+            }
+
+            /* Step 31 \u2192 32: back to grid */
+            if (idx === 31) {
+              S.widgets = S.widgets.filter(function (w) { return !w._tw; });
+              state.tourWidgetsAdded = false;
+              switchView('grid');
+              await sleep(200);
+            }
+
+            driverInstance.moveNext();
+          },
+
+          onDestroyStarted: async function () {
+            localStorage.setItem('xq_tour_seen', '1');
+            driverInstance.destroy();
+            await tourCleanup(state);
+          }
+        });
+
+        driverInstance.drive();
+      }
+
+      window.startTour = startTour;
+
+      /* Auto-start on first visit; wait for DuckDB init */
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () { startTour(false); }, 1200);
+      });
+
+    })();
+  </script>
 </body>
+
 </html>
