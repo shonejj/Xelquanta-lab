@@ -16,7 +16,7 @@ A single-file web application that provides a browser-based interface for DuckDB
 
 ## Usage
 
-1. Open `Xelquanta Lab.html` in a modern web browser
+1. Open `index.html` in a modern web browser
 2. Upload data files using the upload button
 3. Write and execute SQL queries in the query editor or use option in the data area to transform the imported data easily
 4. View results in the data grid below
