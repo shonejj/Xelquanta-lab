@@ -3113,6 +3113,10 @@
 
       /* ── Load temporary demo dataset ── */
       async function loadTourData() {
+        
+        // wait for duck db to load
+         await sleep(5000);
+
         if (!S.conn) return;
         try {
           await S.conn.query(
