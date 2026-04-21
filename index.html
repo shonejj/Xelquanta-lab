@@ -782,7 +782,8 @@
         for (const ext of exts) { try { await S.conn.query(`INSTALL ${ext}; LOAD ${ext};`); } catch (e) { } }
 
         document.getElementById('groq-key').value = localStorage.getItem('groq_key') || '';
-        loadGroqModels().then(() => { const select = document.getElementById('groq-model'); if (select.value === '') select.value = localStorage.getItem('groq_model') || 'llama3-70b-8192'; });
+        loadGroqModels().then(() => { const saved = localStorage.getItem('groq_model'); if (saved) { const sel = document.getElementById('groq-model'); const opt = Array.from(sel.options).find(o => o.value === saved); if (opt) sel.value = saved; } });
+        document.getElementById('groq-key').addEventListener('change', loadGroqModels);
         setStatus('ready', 'Ready');
       } catch (e) { setStatus('error', 'Init failed'); toast('DuckDB error: ' + e.message, 'error'); }
     }
@@ -1135,7 +1136,42 @@
     // ══════════════════════════════════════
     // GROQ AI ASSISTANT
     // ══════════════════════════════════════
-    async function loadGroqModels() { const select = document.getElementById('groq-model'); const key = localStorage.getItem('groq_key'); if (!key) { select.innerHTML = '<option value="llama3-70b-8192">Llama 3 70B</option><option value="llama3-8b-8192">Llama 3 8B</option>'; return; } try { const res = await fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': `Bearer ${key}` } }); if (res.ok) { const data = await res.json(); const models = data.data.filter(m => m.id.includes('llama') || m.id.includes('mixtral')).sort((a, b) => a.id.localeCompare(b.id)); if (models.length > 0) select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join(''); } } catch (e) { } }
+    async function loadGroqModels() {
+      const select = document.getElementById('groq-model');
+      // Use key from input field (dialog open) or from localStorage (on init)
+      const key = document.getElementById('groq-key').value.trim() || localStorage.getItem('groq_key') || '';
+      if (!key) {
+        select.innerHTML = '<option value="" disabled selected>Enter API key to load models</option>';
+        return;
+      }
+      select.innerHTML = '<option value="" disabled selected>Loading models…</option>';
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/models', {
+          headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' }
+        });
+        if (!res.ok) {
+          select.innerHTML = `<option value="" disabled selected>Error ${res.status}: could not load models</option>`;
+          return;
+        }
+        const data = await res.json();
+        // Exclude audio (whisper, orpheus TTS), guard/safety, and embedding models
+        // The API returns object='model' for all; filter by known non-chat ID patterns
+        const NON_CHAT = /whisper|orpheus|distil-whisper|guard|shield|safeguard|tts|embedding/i;
+        const models = data.data
+          .filter(m => !NON_CHAT.test(m.id))
+          .sort((a, b) => a.id.localeCompare(b.id));
+        if (models.length > 0) {
+          const saved = localStorage.getItem('groq_model');
+          select.innerHTML = models.map(m =>
+            `<option value="${m.id}"${m.id === saved ? ' selected' : ''}>${m.id}</option>`
+          ).join('');
+        } else {
+          select.innerHTML = '<option value="" disabled selected>No chat models found</option>';
+        }
+      } catch (e) {
+        select.innerHTML = '<option value="" disabled selected>Failed to fetch models</option>';
+      }
+    }
     function saveGroqSettings() { localStorage.setItem('groq_key', document.getElementById('groq-key').value); localStorage.setItem('groq_model', document.getElementById('groq-model').value); closeD('dlg-groq'); toast('Settings saved'); }
     function clearChat() { S.chatHist = []; document.getElementById('chat-msgs').innerHTML = '<div class="msg ai"><div class="mb">Chat cleared. How can I help?</div></div>'; }
     async function sendChat() { const key = localStorage.getItem('groq_key'); if (!key) return openD('dlg-groq'); const input = document.getElementById('chat-input'); const msg = input.value.trim(); if (!msg) return; input.value = ''; appendChat('user', msg); const schema = Object.entries(S.tables).map(([n, t]) => `Table "${n}": ${t.cols.map(c => c.name).join(', ')}`).join('\n'); const system = `You are a DuckDB SQL expert. Output ONLY valid DuckDB SQL inside \`\`\`sql blocks. CRITICAL: If asked for a chart, output a query returning two columns: "label" (x-axis) and "val" (y-axis). Schema:\n${schema}`; S.chatHist.push({ role: 'user', content: msg }); document.getElementById('chat-send-btn').disabled = true; try { const res = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{ role: 'system', content: system }, ...S.chatHist], temperature: 0.1 }) }); if (!res.ok) throw new Error(await res.text()); const reply = (await res.json()).choices[0].message.content; S.chatHist.push({ role: 'assistant', content: reply }); const match = reply.match(/```(?:sql)?\n?([\s\S]+?)```/i); if (/chart|visualize/i.test(msg) && match) { S.widgets.push({ id: 'w_' + Date.now(), type: 'chart', title: 'AI Chart', chartType: 'bar', sql: match[1].trim() }); switchView('dashboard'); toast('Chart created'); appendChat('ai', "I've added the chart to your dashboard!"); } else appendChat('ai', reply); } catch (e) { appendChat('ai', `Error: ${e.message}`); } finally { document.getElementById('chat-send-btn').disabled = false; } }
