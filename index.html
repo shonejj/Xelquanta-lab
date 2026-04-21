@@ -310,10 +310,10 @@
         <div class="dd-item" onclick="triggerUpload()"><span class="material-icons">upload_file</span>Import Data...</div>
         <div class="dd-item" onclick="loadDemo()"><span class="material-icons">science</span>Load demo data</div>
         <div class="dd-sep"></div>
-        <div class="dd-item" onclick="exportData('xlsx')"><span class="material-icons">table_view</span>Export as Excel</div>
-        <div class="dd-item" onclick="exportData('csv')"><span class="material-icons">description</span>Export as CSV</div>
-        <div class="dd-item" onclick="exportData('json')"><span class="material-icons">data_object</span>Export as JSON</div>
-        <div class="dd-item" onclick="exportData('parquet')"><span class="material-icons">view_column</span>Export as Parquet</div>
+        <div class="dd-item" onclick="openExportDialog('xlsx')"><span class="material-icons">table_view</span>Export as Excel</div>
+        <div class="dd-item" onclick="openExportDialog('csv')"><span class="material-icons">description</span>Export as CSV</div>
+        <div class="dd-item" onclick="openExportDialog('json')"><span class="material-icons">data_object</span>Export as JSON</div>
+        <div class="dd-item" onclick="openExportDialog('parquet')"><span class="material-icons">view_column</span>Export as Parquet</div>
       </div>
     </div>
     <div class="dd" id="dd-edit">
@@ -387,7 +387,7 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <div class="sh">TABLES</div>
+      <div class="sh">TABLES <button class="tbb" onclick="refreshTables()" title="Refresh table list" style="margin-left:auto; width:24px; height:24px;"><span class="material-icons" style="font-size:16px">refresh</span></button></div>
       <div class="sc-scroll">
         <div class="sc-sec">
           <div class="upload-zone" id="upload-zone">
@@ -541,6 +541,108 @@
       <div class="dlg-foot">
         <button class="btn btn-t" onclick="closeD('dlg-template-map')">Cancel</button>
         <button class="btn btn-c" onclick="applyTemplateMap()">Apply Template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save As New Table Modal -->
+  <div class="overlay" id="dlg-save-table">
+    <div class="dialog" style="max-width: 420px;">
+      <div class="dlg-title"><span class="material-icons">save</span> Save as New Table</div>
+      <div class="dlg-body">
+        <div class="ff">
+          <label class="fl-lbl">Table Name</label>
+          <input class="fi" id="save-table-name" placeholder="e.g. my_analysis" autocomplete="off">
+          <span style="font-size:11px; color:var(--text3)">Only letters, numbers and underscores. Existing table with same name will be replaced.</span>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button class="btn btn-t" onclick="closeD('dlg-save-table')">Cancel</button>
+        <button class="btn btn-c" onclick="confirmSaveAsNewTable()"><span class="material-icons">save</span> Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Table Confirm Modal -->
+  <div class="overlay" id="dlg-delete-table">
+    <div class="dialog" style="max-width: 420px;">
+      <div class="dlg-title" style="color:var(--red);"><span class="material-icons">delete_forever</span> Delete Table</div>
+      <div class="dlg-body">
+        <p style="font-size:14px; color:var(--text);">Are you sure you want to delete table <strong id="delete-table-name-display"></strong>?</p>
+        <p style="font-size:13px; color:var(--red); margin-top:4px;">This action cannot be undone.</p>
+      </div>
+      <div class="dlg-foot">
+        <button class="btn btn-t" onclick="closeD('dlg-delete-table')">Cancel</button>
+        <button class="btn btn-c" onclick="confirmDeleteTable()" style="background:var(--red);"><span class="material-icons">delete</span> Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Column Modal -->
+  <div class="overlay" id="dlg-rename-col">
+    <div class="dialog" style="max-width: 420px;">
+      <div class="dlg-title"><span class="material-icons">edit</span> Rename Column</div>
+      <div class="dlg-body">
+        <div class="ff">
+          <label class="fl-lbl">New Column Name</label>
+          <input class="fi" id="rename-col-input" placeholder="new_name">
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button class="btn btn-t" onclick="closeD('dlg-rename-col')">Cancel</button>
+        <button class="btn btn-c" onclick="confirmRenameColumn()">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Column Type Modal -->
+  <div class="overlay" id="dlg-change-type">
+    <div class="dialog" style="max-width: 420px;">
+      <div class="dlg-title"><span class="material-icons">transform</span> Change Data Type</div>
+      <div class="dlg-body">
+        <div class="ff">
+          <label class="fl-lbl">New SQL Type</label>
+          <select class="fs" id="change-type-select">
+            <option value="VARCHAR">Text (VARCHAR)</option>
+            <option value="INTEGER">Integer (INTEGER)</option>
+            <option value="DOUBLE">Decimal (DOUBLE)</option>
+            <option value="BOOLEAN">Boolean</option>
+            <option value="DATE">Date</option>
+            <option value="TIMESTAMP">Timestamp</option>
+            <option value="BIGINT">Big Integer (BIGINT)</option>
+          </select>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button class="btn btn-t" onclick="closeD('dlg-change-type')">Cancel</button>
+        <button class="btn btn-c" onclick="confirmChangeColType()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export with Filename Modal -->
+  <div class="overlay" id="dlg-export">
+    <div class="dialog" style="max-width: 440px;">
+      <div class="dlg-title"><span class="material-icons">download</span> Export Data</div>
+      <div class="dlg-body">
+        <div class="ff">
+          <label class="fl-lbl">File Name</label>
+          <input class="fi" id="export-filename" placeholder="my_export">
+          <span style="font-size:11px; color:var(--text3)">Extension will be added automatically.</span>
+        </div>
+        <div class="ff">
+          <label class="fl-lbl">Format</label>
+          <select class="fs" id="export-format">
+            <option value="csv">CSV (.csv)</option>
+            <option value="xlsx">Excel (.xlsx)</option>
+            <option value="json">JSON (.json)</option>
+            <option value="parquet">Parquet (.parquet)</option>
+          </select>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button class="btn btn-t" onclick="closeD('dlg-export')">Cancel</button>
+        <button class="btn btn-c" onclick="confirmExport()"><span class="material-icons">download</span> Export</button>
       </div>
     </div>
   </div>
@@ -724,8 +826,27 @@
     // ══════════════════════════════════════
     // DATA EXPORT
     // ══════════════════════════════════════
-    async function exportData(format) {
+    function openExportDialog(format) {
       if (!S.rows.length) return toast('No data to export', 'error');
+      closeAllDD();
+      const defaultName = S.active ? S.active : 'export';
+      document.getElementById('export-filename').value = defaultName;
+      document.getElementById('export-format').value = format;
+      openD('dlg-export');
+    }
+
+    async function confirmExport() {
+      const format = document.getElementById('export-format').value;
+      const rawName = document.getElementById('export-filename').value.trim() || 'export';
+      // Sanitize filename
+      const safeName = rawName.replace(/[^a-zA-Z0-9_\-. ]/g, '_');
+      closeD('dlg-export');
+      await exportData(format, safeName);
+    }
+
+    async function exportData(format, fileName) {
+      if (!S.rows.length) return toast('No data to export', 'error');
+      const baseName = fileName || (S.active ? S.active : `export_${Date.now()}`);
       try {
         let content, mime, ext;
         if (format === 'xlsx') {
@@ -733,8 +854,8 @@
           const cleanData = S.rows.map(r => { const o = { ...r }; delete o.__rowid; return o; });
           const ws = XLSX.utils.json_to_sheet(cleanData);
           const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data");
-          XLSX.writeFile(wb, `export_${Date.now()}.xlsx`);
-          setStatus('ready', 'Ready'); closeAllDD(); return;
+          XLSX.writeFile(wb, `${baseName}.xlsx`);
+          setStatus('ready', 'Ready'); return;
         }
 
         if (format === 'csv') {
@@ -746,19 +867,19 @@
           mime = 'application/json'; ext = 'json';
         } else if (format === 'parquet') {
           setStatus('loading', 'Exporting Parquet...');
-          const filename = `export_${Date.now()}.parquet`;
+          const filename = `${baseName}.parquet`;
           await S.conn.query(`COPY (${S.sql}) TO '${filename}' (FORMAT PARQUET)`);
           const buffer = await S.db.copyFileToBuffer(filename);
           const blob = new Blob([buffer], { type: 'application/octet-stream' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a'); a.href = url; a.download = filename;
-          a.click(); URL.revokeObjectURL(url); setStatus('ready', 'Ready'); closeAllDD(); return;
+          a.click(); URL.revokeObjectURL(url); setStatus('ready', 'Ready'); return;
         }
 
         const blob = new Blob([content], { type: mime });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `export_${Date.now()}.${ext}`;
-        a.click(); URL.revokeObjectURL(url); closeAllDD();
+        const a = document.createElement('a'); a.href = url; a.download = `${baseName}.${ext}`;
+        a.click(); URL.revokeObjectURL(url);
       } catch (e) { toast('Export failed: ' + e.message, 'error'); setStatus('ready', 'Ready'); }
     }
 
@@ -958,13 +1079,20 @@
       }
     }
 
-    async function saveAsNewTable() {
-      const name = prompt("Enter new table name to save this view:");
-      if (!name) return;
+    function saveAsNewTable() {
+      const suggested = S.active ? S.active + '_view' : 'new_table';
+      document.getElementById('save-table-name').value = suggested;
+      openD('dlg-save-table');
+    }
+
+    async function confirmSaveAsNewTable() {
+      const name = document.getElementById('save-table-name').value.trim();
+      if (!name) return toast('Please enter a table name', 'error');
+      closeD('dlg-save-table');
       try {
         await S.conn.query(`CREATE OR REPLACE TABLE "${name}" AS ${S.sql}`);
-        await refreshTables(); await setActive(name); toast(`Saved as ${name}`);
-      } catch (e) { toast('Error saving table', 'error'); }
+        await refreshTables(); await setActive(name); toast(`Saved as "${name}"`);
+      } catch (e) { toast('Error saving table: ' + e.message, 'error'); }
     }
 
     // ══════════════════════════════════════
@@ -986,13 +1114,23 @@
       try { const cr = await S.conn.query(`SELECT COUNT(*) AS n FROM "${name}"`); if (S.tables[name]) S.tables[name].rowCount = Number(cr.toArray()[0].n); renderSidebar(); toast(`Refreshed ${name}`); } catch (e) { toast('Refresh failed', 'error'); }
     }
 
-    async function deleteTable(name) {
-      if (!confirm(`Delete table "${name}"?\n\nThis cannot be undone.`)) return;
+    let _pendingDeleteTable = null;
+    function deleteTable(name) {
+      _pendingDeleteTable = name;
+      document.getElementById('delete-table-name-display').textContent = `"${name}"`;
+      openD('dlg-delete-table');
+    }
+
+    async function confirmDeleteTable() {
+      const name = _pendingDeleteTable;
+      if (!name) return;
+      closeD('dlg-delete-table');
+      _pendingDeleteTable = null;
       try {
         await S.conn.query(`DROP TABLE IF EXISTS "${name}"`); delete S.tables[name];
         if (S.active === name) { S.active = null; S.rows = []; S.cols = []; S.sql = ''; document.getElementById('grid').innerHTML = '<div class="empty"><span class="material-icons">grid_on</span><h3>No data loaded</h3></div>'; document.getElementById('pag').style.display = 'none'; updateSB('—'); }
-        renderSidebar(); toast(`Deleted ${name}`);
-      } catch (e) { toast('Delete failed', 'error'); }
+        renderSidebar(); toast(`Deleted "${name}"`);
+      } catch (e) { toast('Delete failed: ' + e.message, 'error'); }
     }
 
     function renderGrid() {
@@ -1085,8 +1223,11 @@
 
     let activeCol = null;
     function openColMenu(e, col, type) { e.stopPropagation(); closeAllDD(); activeCol = { name: col, type: type }; const menu = document.getElementById('col-menu'); menu.style.left = e.clientX + 'px'; menu.style.top = e.clientY + 'px'; menu.classList.add('open'); }
-    function renameColumn() { closeAllDD(); const newName = prompt('Enter new column name:', activeCol.name); if (!newName || newName === activeCol.name) return; const sel = S.cols.filter(c => c.name !== '__rowid').map(c => c.name === activeCol.name ? `"${c.name}" AS "${newName}"` : `"${c.name}"`).join(', '); runQ(`SELECT __rowid, ${sel} FROM (${S.sql}) AS t`); }
-    function changeColType() { closeAllDD(); const newType = prompt('Enter new SQL type (e.g., INT, DOUBLE, VARCHAR, DATE):', activeCol.type); if (!newType) return; const sel = S.cols.filter(c => c.name !== '__rowid').map(c => c.name === activeCol.name ? `CAST("${c.name}" AS ${newType}) AS "${c.name}"` : `"${c.name}"`).join(', '); runQ(`SELECT __rowid, ${sel} FROM (${S.sql}) AS t`); }
+    function renameColumn() { closeAllDD(); document.getElementById('rename-col-input').value = activeCol.name; openD('dlg-rename-col'); }
+    function confirmRenameColumn() { const newName = document.getElementById('rename-col-input').value.trim(); closeD('dlg-rename-col'); if (!newName || newName === activeCol.name) return; const sel = S.cols.filter(c => c.name !== '__rowid').map(c => c.name === activeCol.name ? `"${c.name}" AS "${newName}"` : `"${c.name}"`).join(', '); runQ(`SELECT __rowid, ${sel} FROM (${S.sql}) AS t`); }
+    function changeColType() { closeAllDD(); // pre-select current type in dropdown
+      const sel = document.getElementById('change-type-select'); const t = (activeCol.type || '').toUpperCase(); if (/INT|BIGINT/.test(t)) sel.value = /BIGINT/.test(t) ? 'BIGINT' : 'INTEGER'; else if (/DOUBLE|FLOAT|DECIMAL/.test(t)) sel.value = 'DOUBLE'; else if (/BOOL/.test(t)) sel.value = 'BOOLEAN'; else if (/DATE/.test(t)) sel.value = 'DATE'; else if (/TIME/.test(t)) sel.value = 'TIMESTAMP'; else sel.value = 'VARCHAR'; openD('dlg-change-type'); }
+    function confirmChangeColType() { const newType = document.getElementById('change-type-select').value; closeD('dlg-change-type'); if (!newType) return; const sel = S.cols.filter(c => c.name !== '__rowid').map(c => c.name === activeCol.name ? `CAST("${c.name}" AS ${newType}) AS "${c.name}"` : `"${c.name}"`).join(', '); runQ(`SELECT __rowid, ${sel} FROM (${S.sql}) AS t`); }
     function hideColumn() { closeAllDD(); const sel = S.cols.filter(c => c.name !== '__rowid' && c.name !== activeCol.name).map(c => `"${c.name}"`).join(', '); runQ(`SELECT __rowid, ${sel} FROM (${S.sql}) AS t`); }
     function openFormula() { closeAllDD(); document.getElementById('fm-name').value = 'new_col'; document.getElementById('fm-expr').value = ''; openD('dlg-formula'); }
     function applyFormula() { const name = document.getElementById('fm-name').value; const expr = document.getElementById('fm-expr').value; runQ(`SELECT *, ${expr} AS "${name}" FROM (${S.sql}) AS t`); closeD('dlg-formula'); }
@@ -1176,7 +1317,7 @@
     function clearChat() { S.chatHist = []; document.getElementById('chat-msgs').innerHTML = '<div class="msg ai"><div class="mb">Chat cleared. How can I help?</div></div>'; }
     async function sendChat() { const key = localStorage.getItem('groq_key'); if (!key) return openD('dlg-groq'); const input = document.getElementById('chat-input'); const msg = input.value.trim(); if (!msg) return; input.value = ''; appendChat('user', msg); const schema = Object.entries(S.tables).map(([n, t]) => `Table "${n}": ${t.cols.map(c => c.name).join(', ')}`).join('\n'); const system = `You are a DuckDB SQL expert. Output ONLY valid DuckDB SQL inside \`\`\`sql blocks. CRITICAL: If asked for a chart, output a query returning two columns: "label" (x-axis) and "val" (y-axis). Schema:\n${schema}`; S.chatHist.push({ role: 'user', content: msg }); document.getElementById('chat-send-btn').disabled = true; try { const res = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{ role: 'system', content: system }, ...S.chatHist], temperature: 0.1 }) }); if (!res.ok) throw new Error(await res.text()); const reply = (await res.json()).choices[0].message.content; S.chatHist.push({ role: 'assistant', content: reply }); const match = reply.match(/```(?:sql)?\n?([\s\S]+?)```/i); if (/chart|visualize/i.test(msg) && match) { S.widgets.push({ id: 'w_' + Date.now(), type: 'chart', title: 'AI Chart', chartType: 'bar', sql: match[1].trim() }); switchView('dashboard'); toast('Chart created'); appendChat('ai', "I've added the chart to your dashboard!"); } else appendChat('ai', reply); } catch (e) { appendChat('ai', `Error: ${e.message}`); } finally { document.getElementById('chat-send-btn').disabled = false; } }
     function appendChat(role, text) { const el = document.getElementById('chat-msgs'), div = document.createElement('div'); div.className = `msg ${role}`; let html = text.replace(/```(?:sql)?\n?([\s\S]+?)```/gi, (_, code) => `<div class="msg-sql">${escH(code.trim())}<button class="msg-sql-btn" onclick="applyAISQL(this)" data-sql="${escA(code.trim())}">Apply SQL</button></div>`); div.innerHTML = `<div class="mb">${html}</div>`; el.appendChild(div); el.scrollTop = el.scrollHeight; }
-    function applyAISQL(btn) { runQ(btn.getAttribute('data-sql')); if (window.innerWidth <= 768) toggleChat(); }
+    async function applyAISQL(btn) { await runQ(btn.getAttribute('data-sql')); await refreshTables(); if (window.innerWidth <= 768) toggleChat(); }
     async function fixSQLError() { const key = localStorage.getItem('groq_key'); if (!key) return openD('dlg-groq'); const badSql = document.getElementById('sql-editor').value, errorMsg = document.getElementById('sql-error-msg').textContent; const schema = Object.entries(S.tables).map(([n, t]) => `Table "${n}": ${t.cols.map(c => c.name).join(', ')}`).join('\n'); const prompt = `Fix this DuckDB SQL. \nQuery: ${badSql}\nError: ${errorMsg}\nSchema:\n${schema}\nReturn ONLY the fixed SQL in a \`\`\`sql block.`; try { const res = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: localStorage.getItem('groq_model') || 'llama3-70b-8192', messages: [{ role: 'user', content: prompt }] }) }); const match = (await res.json()).choices[0].message.content.match(/```(?:sql)?\n?([\s\S]+?)```/i); if (match) { document.getElementById('sql-editor').value = match[1].trim(); document.getElementById('run-btn').click(); } } catch (e) { toast('Auto-fix failed', 'error'); } }
 
     // UTILS
@@ -1216,7 +1357,9 @@
     function escA(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     function esc(s) { return String(s).replace(/'/g, "\\'"); }
     function shortType(t) { t = (t || '').toUpperCase(); if (/INT|BIGINT/.test(t)) return 'INT'; if (/DOUBLE|FLOAT|DECIMAL/.test(t)) return 'NUM'; if (/VARCHAR|STRING/.test(t)) return 'STR'; return t.slice(0, 4); }
-    document.addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'z') { e.preventDefault(); History.undo(); } if (e.ctrlKey && e.key === 'y') { e.preventDefault(); History.redo(); } if (e.key === 'Enter' && e.target.id === 'chat-input') { e.preventDefault(); sendChat(); } });
+    document.addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'z') { e.preventDefault(); History.undo(); } if (e.ctrlKey && e.key === 'y') { e.preventDefault(); History.redo(); } if (e.key === 'Enter' && e.target.id === 'chat-input') { e.preventDefault(); sendChat(); } if (e.key === 'Enter' && e.target.id === 'save-table-name') { e.preventDefault(); confirmSaveAsNewTable(); } if (e.key === 'Enter' && e.target.id === 'rename-col-input') { e.preventDefault(); confirmRenameColumn(); } if (e.key === 'Enter' && e.target.id === 'export-filename') { e.preventDefault(); confirmExport(); } });
+    // Close modals on overlay click
+    document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); }));
     
     document.addEventListener('DOMContentLoaded', initDuckDB);
   </script>
